@@ -14,33 +14,35 @@ class Help extends Component {
     }
 
 
-    handleLogin = (email, password) => {
+    handleSignUp = (email, password) => {
 
         try{
 
-        firebase.auth().signInWithEmailAndPassword(email,password)
-        .then(function (user){
-            console.log(user)
-        })
-        .then(this.props.navigation.navigate('Home'))
-
+        if(this.state.password.length < 6){
+            alert("Must be minimum 6 characters!")
+            return;
         }
+        firebase.auth().createUserWithEmailAndPassword(email,password)
+        .then(()=> firebase.auth().currentUser.sendEmailVerification())
+
+        Alert.alert('SUCCESS!','We just emailed you a verification link.',[{text: 'OK'}],{cancelable: false},);
+
+
+        } 
         catch(error){
             console.log(error.toString())
 
         }
 
+    }
+
+    goBack = () => {
+
+     this.props.navigation.navigate('StartScreen')
+
            
              
       }
-
-      goBack = () => {
-
-        this.props.navigation.navigate('StartScreen')
-   
-              
-                
-         }
     
 
 
@@ -70,9 +72,9 @@ class Help extends Component {
                     full
                     rounded
                     success
-                    onPress={() => this.handleLogin(this.state.email, this.state.password)}>
+                    onPress={() => this.handleSignUp(this.state.email, this.state.password)}>
 
-                        <Text style = {{color:'white'}}>Login</Text>
+                        <Text style = {{color:'white'}}>Register</Text>
                     </Button>
 
                     <Button style ={{margin:10}}

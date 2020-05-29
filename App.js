@@ -28,6 +28,8 @@ import Home from './components/Home'
 import Help from './components/Help'
 import Profile from './components/Profile'
 import Login from './components/Login'
+import SignUp from './components/SignUp'
+import StartScreen from './components/StartScreen'
 
 
 
@@ -84,8 +86,13 @@ const bottomTabNavigator = createBottomTabNavigator(
 );
 
 
-const RootSwitch = createSwitchNavigator({ 
 
+
+
+
+const RootSwitch = createSwitchNavigator({ 
+StartScreen,
+SignUp,
   Login,
   bottomTabNavigator
   });
