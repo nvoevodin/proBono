@@ -1,6 +1,9 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View , TouchableOpacity} from 'react-native';
+//import {Button} from 'native-base';
 import * as firebase from 'firebase';
+import { Ionicons } from '@expo/vector-icons';
+import { Entypo } from '@expo/vector-icons'; 
 
 class Home extends Component {
 
@@ -20,11 +23,24 @@ class Home extends Component {
               style={{position: 'absolute',right: 20,top: 60}}
               onPress={this.logout}>
                 <Text 
-                style ={{color:'blue', fontSize: 20}}>
+                style ={{color:'black', fontSize: 20}}>
                   Logout
                   </Text>
               </TouchableOpacity>
-              <Text>Home</Text>
+              <TouchableOpacity
+   style={{
+       borderWidth:1,
+       borderColor:'rgba(0,0,0,0.2)',
+       alignItems:'center',
+       justifyContent:'center',
+       width:150,
+       height:150,
+       backgroundColor:'#fff',
+       borderRadius:100,
+     }}
+ >
+   <Entypo name="location" size={40} color="black" />
+ </TouchableOpacity>
             </View>
           );
 
