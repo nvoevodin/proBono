@@ -10,25 +10,23 @@ class Help extends Component {
 
     state = {
         email:'',
-        password:''
+        password:'',
+        errorMessage: null
     }
 
 
     handleLogin = (email, password) => {
 
-        try{
+        
 
-        firebase.auth().signInWithEmailAndPassword(email,password)
-        .then(function (user){
-            console.log(user)
-        })
-        .then(this.props.navigation.navigate('Home'))
+        firebase.auth()
+        .signInWithEmailAndPassword(email, password)
+        .then(() => this.props.navigation.navigate('Home'))
+        .catch(error => this.setState({ errorMessage: error.message }))
 
-        }
-        catch(error){
-            console.log(error.toString())
 
-        }
+        
+       
 
            
              
@@ -49,6 +47,10 @@ class Help extends Component {
         return (
             <Container style = {styles.container}>
                 <Form>
+                {this.state.errorMessage &&
+          <Text style={{ color: 'red' }}>
+            {this.state.errorMessage}
+          </Text>}
                     <Item floatingLabel>
                         <Label>Email</Label>
                         <Input

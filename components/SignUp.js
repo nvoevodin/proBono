@@ -10,13 +10,14 @@ class Help extends Component {
 
     state = {
         email:'',
-        password:''
+        password:'',
+        errorMessage:null
     }
 
 
     handleSignUp = (email, password) => {
 
-        try{
+        
 
         if(this.state.password.length < 6){
             alert("Must be minimum 6 characters!")
@@ -24,15 +25,10 @@ class Help extends Component {
         }
         firebase.auth().createUserWithEmailAndPassword(email,password)
         .then(()=> firebase.auth().currentUser.sendEmailVerification())
+        .catch(error => this.setState({ errorMessage: error.message }))
 
         Alert.alert('SUCCESS!','We just emailed you a verification link.',[{text: 'OK'}],{cancelable: false},);
 
-
-        } 
-        catch(error){
-            console.log(error.toString())
-
-        }
 
     }
 
@@ -51,6 +47,10 @@ class Help extends Component {
         return (
             <Container style = {styles.container}>
                 <Form>
+                {this.state.errorMessage &&
+          <Text style={{ color: 'red' }}>
+            {this.state.errorMessage}
+          </Text>}
                     <Item floatingLabel>
                         <Label>Email</Label>
                         <Input
@@ -67,6 +67,8 @@ class Help extends Component {
                         autoCapitalize='none'
                         onChangeText = {(password) => this.setState({password})}/>
                     </Item>
+
+          
 
                     <Button style ={{margin:10}}
                     full
@@ -85,6 +87,9 @@ class Help extends Component {
 
                         <Text style = {{color:'white'}}>Go Back</Text>
                     </Button>
+
+                    
+
 
                 </Form>
             </Container>

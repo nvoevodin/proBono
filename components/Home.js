@@ -1,13 +1,25 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View , TouchableOpacity} from 'react-native';
 
 class Home extends Component {
+
+  logout = () =>{
+    this.props.navigation.navigate('StartScreen')
+  }
 
 
     render(){
 
         return (
             <View style={styles.container}>
+              <TouchableOpacity 
+              style={{position: 'absolute',right: 20,top: 60}}
+              onPress={this.logout}>
+                <Text 
+                style ={{color:'blue', fontSize: 20}}>
+                  Logout
+                  </Text>
+              </TouchableOpacity>
               <Text>Home</Text>
             </View>
           );
@@ -28,4 +40,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  logout:{
+    
+      ...StyleSheet.absoluteFillObject,
+      alignSelf: 'flex-end',
+      marginTop: -5,
+      //position: 'absolute', // add if dont work with above
+    
+  }
 });
