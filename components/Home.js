@@ -1,9 +1,13 @@
 import React, {Component} from 'react';
 import { StyleSheet, Text, View , TouchableOpacity} from 'react-native';
+import * as firebase from 'firebase';
 
 class Home extends Component {
 
   logout = () =>{
+    firebase.auth().signOut()
+        .catch(error => console.log(error))
+
     this.props.navigation.navigate('StartScreen')
   }
 

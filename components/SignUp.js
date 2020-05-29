@@ -11,7 +11,10 @@ class Help extends Component {
     state = {
         email:'',
         password:'',
-        errorMessage:null
+        errorMessage:null,
+        firstName:'',
+        lastName:'',
+        WorkId:''
     }
 
 
@@ -51,6 +54,30 @@ class Help extends Component {
           <Text style={{ color: 'red' }}>
             {this.state.errorMessage}
           </Text>}
+
+          <Item floatingLabel>
+                        <Label>First Name</Label>
+                        <Input
+                        autoCorrect={false}
+                        onChangeText = {(firstName) => this.setState({firstName})}/>
+                    </Item>
+
+                    <Item floatingLabel>
+                        <Label>Last Name</Label>
+                        <Input
+                        secureTextEntry={false}
+                        autoCorrect={false}
+                        onChangeText = {(lastName) => this.setState({lastName})}/>
+                    </Item>
+                    <Item floatingLabel>
+                        <Label>Work ID</Label>
+                        <Input
+                        secureTextEntry={true}
+                        autoCorrect={false}
+                        autoCapitalize='none'
+                        onChangeText = {(workId) => this.setState({workId})}/>
+                    </Item>
+
                     <Item floatingLabel>
                         <Label>Email</Label>
                         <Input
@@ -70,7 +97,7 @@ class Help extends Component {
 
           
 
-                    <Button style ={{margin:10}}
+                    <Button style ={{margin:10, marginTop: 40}}
                     full
                     rounded
                     success
