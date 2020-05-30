@@ -6,7 +6,7 @@ import * as firebase from 'firebase';
 
 
 
-class Help extends Component {
+class SignUp extends Component {
 
 
 
@@ -160,7 +160,7 @@ class Help extends Component {
 }
 
 
-export default Help
+export default SignUp
 
 const styles = StyleSheet.create({
   container: {

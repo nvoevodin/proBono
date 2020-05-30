@@ -30,6 +30,7 @@ import Profile from './components/Profile'
 import Login from './components/Login'
 import SignUp from './components/SignUp'
 import StartScreen from './components/StartScreen'
+import PageTemplate from './components/subComponents/Header'
 
 
 

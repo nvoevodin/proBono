@@ -10,21 +10,34 @@ import PageTemplate from './subComponents/Header'
 
 class Home extends Component {
 
+  
   uid = firebase.auth().currentUser.uid;
+  
 
   state = {
     firstName:'',
     lastName:'',
-    workId:''
+    workId:'',
+    submitted:false
   }
 
 
   componentDidMount() {
 
+    
+
     this.readUserData()
 
   }
 
+
+
+  logout = () =>{
+    firebase.auth().signOut()
+        .catch(error => console.log(error))
+
+    this.props.navigation.navigate('StartScreen')
+  }
 
 
 
@@ -57,6 +70,8 @@ class Home extends Component {
       { method: "POST" }
     ).catch(err => console.error(err));
 
+    this.setState({submitted:true})
+
   }
 
 
@@ -64,7 +79,7 @@ class Home extends Component {
 
         return (
           <React.Fragment>
-            <PageTemplate title={'Home'}/>
+            <PageTemplate title={'Home'} logout = {this.logout}/>
             <View style={styles.container}>
               
               <TouchableOpacity 
@@ -80,7 +95,7 @@ class Home extends Component {
        justifyContent:'center',
        width:170,
        height:170,
-       backgroundColor:'#eb6e3d',
+       backgroundColor: this.state.submitted == false ? '#eb6e3d' : 'green',
        borderRadius:100,
        shadowColor: 'rgba(0,0,0, .4)', // IOS
        shadowOffset: { height: 1, width: 1 }, // IOS
@@ -90,7 +105,7 @@ class Home extends Component {
      }}
     onPress = {this.handleButton}
  >
-   <Entypo name="location" size={40} color="white" />
+   {this.state.submitted == false ? <Entypo name= "location" size={60} color="white" /> : <Entypo name="check" size={70} color="white" />}
  </TouchableOpacity>
             </View>
             </React.Fragment>

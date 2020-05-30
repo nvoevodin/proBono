@@ -5,13 +5,19 @@ import PageTemplate from './subComponents/Header'
 class Help extends Component {
 
   
+  logout = () =>{
+    firebase.auth().signOut()
+        .catch(error => console.log(error))
+
+    this.props.navigation.navigate('StartScreen')
+  }
 
 
     render(){
 
         return (
           <React.Fragment>
-            <PageTemplate title={'Help'}/>
+            <PageTemplate title={'Help'} logout = {this.logout}/>
             <View style={styles.container}>
               <Text>Help</Text>
             </View>

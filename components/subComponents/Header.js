@@ -2,15 +2,13 @@ import React, {Component} from 'react';
 import {Text,View, StyleSheet, TouchableOpacity} from 'react-native';
 import * as firebase from 'firebase';
 
-logout = () =>{
-    firebase.auth().signOut()
-        .catch(error => console.log(error))
 
-    this.props.navigation.navigate('StartScreen')
-  }
 
 
 class PageTemplate extends Component {
+
+
+
     render() {
         return (
             <React.Fragment>
@@ -39,7 +37,7 @@ class PageTemplate extends Component {
                           flexDirection: 'row',
                           flex:1
                           }}>
-                <TouchableOpacity onPress={this.logout}>
+                <TouchableOpacity onPress={this.props.logout}>
                     <Text style ={{color:'white',fontSize: 20}}>Logout</Text>
                     {/* <Ionicons  name="ios-arrow-dropleft" size={32} color="white" /> */}
                 </TouchableOpacity>

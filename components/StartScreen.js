@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View , Alert,Image} from 'react-native';
+import { StyleSheet, Text, View ,Image} from 'react-native';
 import {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 import * as firebase from 'firebase';
+import * as Animatable from "react-native-animatable";
 
 
 
@@ -12,6 +13,21 @@ class Help extends Component {
         email:'',
         password:''
     }
+
+    componentDidMount() {
+      
+      firebase.auth().onAuthStateChanged(user => {
+       console.log(user)
+        // user ? this.registerForPushNotificationsAsync(user) : '',
+        // console.log(firebase.auth().currentUser.email)
+        if (user) {
+          this.props.navigation.navigate(user.emailVerified == true ? 'Home' : 'StartScreen' )
+        } 
+        
+        // Expo.Notifications.addListener(this.listen)
+      })
+    }
+
 
 
     handleLogin = () => {
@@ -34,7 +50,7 @@ class Help extends Component {
             <Container >
                 <View style = {styles.container1}>
 
-                <Image
+                <Animatable.Image animation="bounceInDown"
                 style = {styles.tinyLogo}
                 source={require('../assets/donkey.png')}/>
 

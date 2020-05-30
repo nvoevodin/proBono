@@ -1,12 +1,28 @@
 import React, {Component} from 'react';
-import { StyleSheet} from 'react-native';
-import { Container, Header, Content, Card, CardItem, Text, Body } from "native-base";
+import { StyleSheet, Text} from 'react-native';
+import { Container, Button, Content, Card, CardItem, Body } from "native-base";
 import * as firebase from 'firebase';
 
 import PageTemplate from './subComponents/Header'
 
 
 class Profile extends Component {
+
+
+  tempAlert1 = () =>{
+alert('Change your info here (placeholder)')
+  }
+  tempAlert2 = () =>{
+    alert('(placeholder)')
+      }
+
+
+  logout = () =>{
+    firebase.auth().signOut()
+        .catch(error => console.log(error))
+
+    this.props.navigation.navigate('StartScreen')
+  }
 
 
   uid = firebase.auth().currentUser.uid;
@@ -47,27 +63,47 @@ class Profile extends Component {
 
         return (
           <React.Fragment>
-          <PageTemplate title={'Profile'}/>
+          <PageTemplate title={'Profile'} logout = {this.logout}/>
           <Content padder>
             <Card>
               <CardItem header bordered>
-                <Text>{this.state.firstName + ' ' + this.state.lastName}</Text>
+                <Text>{this.state.workId}</Text>
               </CardItem>
               <CardItem bordered>
                 <Body>
                   <Text>
-                    NativeBase is a free and open source framework that enable
-                    developers to build
-                    high-quality mobile apps using React Native iOS and Android
-                    apps
-                    with a fusion of ES6.
+                    First Name: {this.state.firstName}
+                  </Text>
+                  <Text>
+                    Last Name: {this.state.lastName}
+                  </Text>
+                  <Text>
+                    Some Stat: 7
+                  </Text>
+                  <Text>
+                    Some Stat: 464
                   </Text>
                 </Body>
               </CardItem>
-              <CardItem footer bordered>
-                <Text>GeekyAnts</Text>
-              </CardItem>
+              
             </Card>
+
+            <Button style ={{margin:10, marginTop: 40}}
+                    full
+                    rounded
+                    primary
+                    onPress={this.tempAlert1}>
+
+                        <Text style = {{color:'white'}}>Change Info</Text>
+                    </Button>
+
+                    <Button style ={{margin:10}}
+                    full
+                    rounded
+                    primary
+                    onPress={this.tempAlert2}>
+                             <Text style = {{color:'white'}}>Something</Text>
+                    </Button>
           </Content>
         </React.Fragment>
           );
@@ -87,5 +123,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    padding:40
   },
 });

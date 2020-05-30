@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { StyleSheet, Text, View , Alert} from 'react-native';
 import {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 import * as firebase from 'firebase';
+import ForgotPassword from './subComponents/forgotPassword'
 
 
 
@@ -11,8 +12,14 @@ class Help extends Component {
     state = {
         email:'',
         password:'',
-        errorMessage: null
+        errorMessage: null,
+        modalVisible: false
     }
+
+    showModal =() => {
+      this.setState({ modalVisible : !this.state.modalVisible })
+    }
+  
 
 
     handleLogin = (email, password) => {
@@ -85,6 +92,23 @@ class Help extends Component {
 
                         <Text style = {{color:'white'}}>Go Back</Text>
                     </Button>
+
+                    <Button style ={{margin:10}}
+                    full
+                    rounded
+                    danger
+                    onPress={this.showModal}>
+
+                        <Text style = {{color:'white'}}>Forgot Password</Text>
+                    </Button>
+
+                    {this.state.modalVisible && ( 
+                  <ForgotPassword 
+                    modalVisible = {this.state.modalVisible}
+                    showModal = {this.showModal}
+                    //forgotPassword={this.forgotPassword}
+                  />)}
+
 
                 </Form>
             </Container>
