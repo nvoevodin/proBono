@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
 const moment = require('moment');
 
+import PageTemplate from './subComponents/Header'
 
 class Home extends Component {
 
@@ -48,13 +49,6 @@ class Home extends Component {
 
 
 
-  logout = () =>{
-    firebase.auth().signOut()
-        .catch(error => console.log(error))
-
-    this.props.navigation.navigate('StartScreen')
-  }
-
   handleButton = () =>{
     fetch(
       // MUST USE YOUR LOCALHOST ACTUAL IP!!! NOT http://localhost...
@@ -69,14 +63,14 @@ class Home extends Component {
     render(){
 
         return (
+          <React.Fragment>
+            <PageTemplate title={'Home'}/>
             <View style={styles.container}>
+              
               <TouchableOpacity 
               style={{position: 'absolute',right: 20,top: 60}}
               onPress={this.logout}>
-                <Text 
-                style ={{color:'black', fontSize: 20}}>
-                  Logout
-                  </Text>
+      
               </TouchableOpacity>
               <TouchableOpacity
    style={{
@@ -84,16 +78,22 @@ class Home extends Component {
        borderColor:'rgba(0,0,0,0.2)',
        alignItems:'center',
        justifyContent:'center',
-       width:150,
-       height:150,
-       backgroundColor:'#fff',
+       width:170,
+       height:170,
+       backgroundColor:'#eb6e3d',
        borderRadius:100,
+       shadowColor: 'rgba(0,0,0, .4)', // IOS
+       shadowOffset: { height: 1, width: 1 }, // IOS
+       shadowOpacity: 1, // IOS
+       shadowRadius: 1, //IOS
+       elevation: 5, // Android
      }}
     onPress = {this.handleButton}
  >
-   <Entypo name="location" size={40} color="black" />
+   <Entypo name="location" size={40} color="white" />
  </TouchableOpacity>
             </View>
+            </React.Fragment>
           );
 
     }
