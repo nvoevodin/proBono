@@ -1,11 +1,14 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View , Alert} from 'react-native';
+import { StyleSheet, Text, Alert} from 'react-native';
 import {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 import * as firebase from 'firebase';
 
 
 
+
 class Help extends Component {
+
+
 
 
     state = {
@@ -14,8 +17,26 @@ class Help extends Component {
         errorMessage:null,
         firstName:'',
         lastName:'',
-        WorkId:''
+        workId:''
     }
+
+
+         // when a user signs up they will have a record added to the user table in realtime database
+         addUser = (uid,workId,firstName,lastName) => {
+            // console.log(uid)
+            firebase.database().ref('UsersList/' + uid + '/info/').set({
+                workId,
+                firstName,
+                lastName
+          }).then((data)=>{
+              //success callback
+              console.log('data ' , data)
+          }).catch((error)=>{
+              //error callback
+              // console.log('error ' , error)
+          })
+          }
+    
 
 
     handleSignUp = (email, password) => {
@@ -28,6 +49,16 @@ class Help extends Component {
         }
         firebase.auth().createUserWithEmailAndPassword(email,password)
         .then(()=> firebase.auth().currentUser.sendEmailVerification())
+        .then((user)=>{
+           
+            this.addUser(firebase.auth().currentUser.uid,
+                            this.state.workId, 
+                         this.state.firstName, 
+                         this.state.lastName, 
+                         );
+                        
+          })
+
         .catch(error => this.setState({ errorMessage: error.message }))
 
         Alert.alert('SUCCESS!','We just emailed you a verification link.',[{text: 'OK'}],{cancelable: false},);
