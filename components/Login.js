@@ -24,18 +24,17 @@ class Help extends Component {
 
     handleLogin = (email, password) => {
 
-        
+  //if(firebase.auth().currentUser.emailVerified){
+    firebase.auth()
+    .signInWithEmailAndPassword(email, password)
+    .then(() => this.props.navigation.navigate('Home'))
+    .catch(error => this.setState({ errorMessage: error.message }))
 
-        firebase.auth()
-        .signInWithEmailAndPassword(email, password)
-        .then(() => this.props.navigation.navigate('Home'))
-        .catch(error => this.setState({ errorMessage: error.message }))
+  //} else {
+    //this.setState({ errorMessage: 'Please, register or verify your account!' })
+  //} 
 
-
-        
-       
-
-           
+ 
              
       }
 

@@ -2,8 +2,8 @@ import React, {Component} from 'react';
 import { StyleSheet, Text} from 'react-native';
 import { Container, Button, Content, Card, CardItem, Body } from "native-base";
 import * as firebase from 'firebase';
-
 import PageTemplate from './subComponents/Header'
+import ChangeInfo from './subComponents/changeInformationModal'
 
 
 class Profile extends Component {
@@ -30,7 +30,12 @@ alert('Change your info here (placeholder)')
   state = {
     firstName:'',
     lastName:'',
-    workId:''
+    workId:'',
+    modalVisible: false
+  }
+
+  showModal =() => {
+    this.setState({ modalVisible : !this.state.modalVisible })
   }
 
 
@@ -92,7 +97,7 @@ alert('Change your info here (placeholder)')
                     full
                     rounded
                     primary
-                    onPress={this.tempAlert1}>
+                    onPress={this.showModal}>
 
                         <Text style = {{color:'white'}}>Change Info</Text>
                     </Button>
@@ -104,6 +109,13 @@ alert('Change your info here (placeholder)')
                     onPress={this.tempAlert2}>
                              <Text style = {{color:'white'}}>Something</Text>
                     </Button>
+
+                    {this.state.modalVisible && ( 
+                  <ChangeInfo 
+                    modalVisible = {this.state.modalVisible}
+                    showModal = {this.showModal}
+                    //forgotPassword={this.forgotPassword}
+                  />)}
           </Content>
         </React.Fragment>
           );

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View , TouchableOpacity} from 'react-native';
+import { StyleSheet, Text, View , TouchableOpacity, Alert} from 'react-native';
 //import {Button} from 'native-base';
 import * as firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons';
@@ -23,6 +23,19 @@ class Home extends Component {
 
 
   componentDidMount() {
+
+    if (firebase.auth().currentUser.emailVerified == false){
+      Alert.alert(
+        'ALERT!',
+        'Please verify your email first.',
+        [
+          
+          {text: 'OK'}
+        ],
+        {cancelable: false}
+      );
+      this.logout()
+      }
 
     
 
