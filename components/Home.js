@@ -4,9 +4,15 @@ import { StyleSheet, Text, View , TouchableOpacity, Alert} from 'react-native';
 import * as firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
-const moment = require('moment');
+import Geofence from 'react-native-expo-geofence';
+import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
+import { getDistance } from 'geolib';
 
+
+const moment = require('moment');
 import PageTemplate from './subComponents/Header'
+const myIp =  '192.168.1.183' // '192.168.2.7'
 
 class Home extends Component {
 
@@ -18,7 +24,22 @@ class Home extends Component {
     firstName:'',
     lastName:'',
     workId:'',
-    submitted:false
+    submitted:false,
+    polygonPoints: [
+      {  latitude: 40.7557, longitude: -73.9457 }
+        //latitude: -23.658739, longitude: -46.666305 }//,
+      //{ latitude: -23.651814, longitude:  -46.664129 }
+      ],
+    userLocation : { 
+          latitude: 40.7557, longitude: -73.9457 
+        //latitude: -23.652508,
+        //longitude: -46.661474
+      },
+    proximity:null,
+    hasLocationPermission: null,
+    proximityMax:50,
+    siteId:1000,
+    siteLocation: { latitude: 40.7635514, longitude: -73.9289525  }
   }
 
 
@@ -39,9 +60,44 @@ class Home extends Component {
 
     
 
-    this.readUserData()
+    this.readUserData();
+    this.getLocationsPermissions();
 
   }
+
+    //ask for location permissions 
+    getLocationsPermissions = async () => {
+      let { status } = await Permissions.askAsync(Permissions.LOCATION);
+      //status && console.log('location: ', status)
+      if (status !== 'granted') {
+        this.setState({
+          errorMessage: 'Permission to access location was denied',
+        });
+        } else {
+          this.setState({ hasLocationPermission : status })
+        }
+      
+    }
+
+
+
+  getByProximity = () => {
+        console.log('starting geofence test...')
+        const maxDistanceInKM = 0.5; // 500m distance
+        // startPoint - center of perimeter
+        // points - array of points
+        // maxDistanceInKM - max point distance from startPoint in KM's
+        // result - array of points inside the max distance
+        let result = Geofence.filterByProximity(this.state.userLocation,
+                                                this.state.polygonPoints,
+                                                maxDistanceInKM);
+    
+        // You can access distance of this object in distanceInKM property
+        let distance = result[0].distanceInKM;
+        this.setState({ proximity : distance })
+        console.log(distance);
+
+    }
 
 
 
@@ -72,19 +128,73 @@ class Home extends Component {
   }
 
 
+  getCurrentLoc  = async() => {
+    try {
+      let location = await Location.getCurrentPositionAsync({});
+      location =  await JSON.stringify(location);
+      location = await eval( '(' + '[' + location + ']' + ')' );
+      //location && console.log(location[0].coords.latitude);
+      return location;
+    } catch(e) {
+      Alert.alert('cannot get current location, try again or ask for help')
+    }
+    
+  }
 
 
 
-  handleButton = () =>{
-    fetch(
-      // MUST USE YOUR LOCALHOST ACTUAL IP!!! NOT http://localhost...
-      `http://192.168.2.7:3002/add?time=${moment().utcOffset('-0500').format("YYYY-MM-DD HH:mm:ss").substr(0, 18) + '0'
-      }&site_id=${"B10002"}&first_name=${this.state.firstName}&last_name=${this.state.lastName}&user_id=${this.state.workId}`,
-      { method: "POST" }
-    ).catch(err => console.error(err));
+  handleButton = async () =>{
 
-    this.setState({submitted:true})
+    
+    try {    
+      //get location
+      let location = await this.getCurrentLoc();
+      console.log(parseFloat(location[0].coords.latitude));
+      console.log(parseFloat(location[0].coords.longitude));
+      
+      //test how far away the user is
+      let distance = await getDistance(
+                                 { latitude: parseFloat(location[0].coords.latitude), longitude: parseFloat(location[0].coords.longitude)  },
+                                 { latitude: this.state.siteLocation.latitude, longitude: this.state.siteLocation.longitude  },
+                                  accuracy = 1);
+      console.log('distance: ',distance);
+      
+      //validate that location is close enough to the site (50 meters)
+      if (distance <= this.state.proximityMax) {
+        //if it is send data to database
+        //this.getCurrentLoc();
+        fetch(
+          // MUST USE YOUR LOCALHOST ACTUAL IP!!! NOT http://localhost...
+          `http://${myIp}:3002/add?time=${moment().utcOffset('-0500').format("YYYY-MM-DD HH:mm:ss").substr(0, 18) + '0'
+            }&site_id=${"B10002"}&first_name=${this.state.firstName}
+            &last_name=${this.state.lastName}&user_id=${this.state.workId}
+            &latitude=${this.state.userLocation.latitude}
+            &longitude=${this.state.userLocation.longitude}
+            &checkin_type=0
+            &distance=${distance}`,
+            { method: "POST" }
+            ).catch(err => console.error(err));
 
+          //show checkin as done
+          this.setState({submitted:true})
+
+      } else {
+        //console.log('something went wrong');
+        Alert.alert('Please contact customer service')
+      }
+
+     
+      
+
+
+    } catch (e) {
+      console.log(e);
+    }
+
+
+    
+
+    
   }
 
 
