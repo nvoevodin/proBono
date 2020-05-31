@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import {Text,View, StyleSheet, TouchableOpacity} from 'react-native';
-import * as firebase from 'firebase';
+
 
 
 

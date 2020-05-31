@@ -3,7 +3,7 @@ import { StyleSheet, Text, View ,Image} from 'react-native';
 import {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 import * as firebase from 'firebase';
 import * as Animatable from "react-native-animatable";
-
+import { Entypo } from '@expo/vector-icons'; 
 
 
 class Help extends Component {
@@ -48,13 +48,15 @@ class Help extends Component {
 
         return (
             <Container >
-                <View style = {styles.container1}>
+                <Animatable.View animation="bounceInDown" style = {styles.container1}>
 
-                <Animatable.Image animation="bounceInDown"
+              <Entypo  name="location-pin" size={230} color="#eb6e3d" />
+              <Text style = {{fontSize:50, fontWeight:'bold'}}>GeoHut</Text>
+                {/* <Animatable.Image animation="bounceInDown"
                 style = {styles.tinyLogo}
-                source={require('../assets/donkey.png')}/>
+                source={require('../assets/donkey.png')}/> */}
 
-</View>
+</Animatable.View>
 
 <View style = {styles.container}> 
                 <Form>
@@ -80,6 +82,16 @@ class Help extends Component {
                 </Form>
 
                 </View>
+
+                <View style = {styles.container3}>
+
+              
+              <Text style = {{fontSize:15, fontWeight:'bold'}}>by</Text>
+                <Animatable.Image animation="bounceInUp"
+                style = {styles.tinyLogo}
+                source={require('../assets/companyLogo.png')}/>
+
+</View>
             </Container>
           );
 
@@ -98,18 +110,30 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     justifyContent: 'center',
     
-    padding: 40
+    paddingTop: 10,
+    
+    paddingRight: 40,
+    paddingLeft:40,
+    marginTop: 40
   },
   container1: {
     flex: 1,
     backgroundColor: '#fff',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 80
+  },
+  container3: {
+  
+    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20
   },
   tinyLogo: {
-    width: 250,
     
-    height: 250
+    width:'40%',
+    height: '22%'
 
     
   }
