@@ -8,7 +8,7 @@ import Geofence from 'react-native-expo-geofence';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
-
+import Layout from '../constants/Layout';
 
 const moment = require('moment');
 import PageTemplate from './subComponents/Header'
@@ -27,6 +27,7 @@ class Home extends Component {
     email: 'fauslyfox110@gmail.com', //for now swap email to see effect
     phone: '',
     submitted:false,
+    preSubmitted:false,
     polygonPoints: [
       {  latitude: 40.7557, longitude: -73.9457 }
         //latitude: -23.658739, longitude: -46.666305 }//,
@@ -176,11 +177,46 @@ class Home extends Component {
     
   }
 
+  preCheckin = async () => {
+    console.log('prechecking...')
+    try {    
+      //get location
+      let location = await this.getCurrentLoc();
+      console.log(parseFloat(location[0].coords.latitude));
+      console.log(parseFloat(location[0].coords.longitude));
+      
+      //test how far away the user is
+      let distance = await getDistance(
+                                 { latitude: parseFloat(location[0].coords.latitude), longitude: parseFloat(location[0].coords.longitude)  },
+                                 { latitude: this.state.siteLocation.latitude, longitude: this.state.siteLocation.longitude  },
+                                  accuracy = 1);
+      console.log('distance: ',distance);
+      
+      //send data
+        fetch(
+          // MUST USE YOUR LOCALHOST ACTUAL IP!!! NOT http://localhost...
+          `http://${myIp}:3002/add?time=${moment().utcOffset('-0500').format("YYYY-MM-DD HH:mm:ss").substr(0, 18) + '0'
+            }&site_id=${"B10002"}&first_name=${this.state.firstName}
+            &last_name=${this.state.lastName}&user_id=${this.state.workId}
+            &latitude=${this.state.userLocation.latitude}
+            &longitude=${this.state.userLocation.longitude}
+            &checkin_type=1
+            &distance=${distance}`,
+            { method: "POST" }
+            ).catch(err => console.error(err));
+
+          //show checkin as done
+          this.setState({preSubmitted:true})
+
+    } catch (e) {
+      console.log(e);
+    }
+
+  }
+
 
 
   handleButton = async () =>{
-
-    
     try {    
       //get location
       let location = await this.getCurrentLoc();
@@ -217,11 +253,6 @@ class Home extends Component {
         //console.log('something went wrong');
         Alert.alert('Please contact customer service')
       }
-
-     
-      
-
-
     } catch (e) {
       console.log(e);
     }
@@ -239,41 +270,93 @@ class Home extends Component {
         return (
           <React.Fragment>
             <PageTemplate title={'Home'} logout = {this.logout}/>
+
+            <View 
+              style={{
+                marginLeft: 20
+              }}
+            >
+              <Text style={styles.titleText}>
+                Your Site:
+              </Text>
+              <Text style ={styles.subTitleText}>
+                {this.state.siteName ? `${this.state.siteName}` : `Retrieving ... `}
+              </Text>
+            </View>
+
+            <View
+              style={{
+                marginLeft: 20
+              }}
+            >
+              <Text style={styles.titleText}>
+                Site Address:
+              </Text>
+              <Text style ={styles.subTitleText}>
+                {this.state.siteName ? `${this.state.siteAdress}` : `Retrieving ... `}
+              </Text>
+
+            </View>
+
+            {/**pre-checkin button */}
+            <TouchableOpacity
+              onPress={this.preCheckin}
+              style={{
+                marginTop:10,
+                marginLeft: 20,
+                borderWidth:1,
+                borderColor:'rgba(0,0,0,0.2)',
+                alignItems:'center',
+                justifyContent:'center',
+                width:30,
+                height:30,
+                backgroundColor: this.state.preSubmitted == false ? '#eb6e3d' : 'green',
+                borderRadius:100,
+                shadowColor: 'rgba(0,0,0, .4)', // IOS
+                shadowOffset: { height: 1, width: 1 }, // IOS
+                shadowOpacity: 1, // IOS
+                shadowRadius: 1, //IOS
+                elevation: 5, // Android
+              }}
+            >
+              {this.state.preSubmitted == false ? <Entypo name= "location" size={15} color="white" /> : <Entypo name="check" size={15} color="white" />}
+            </TouchableOpacity>
             
             <View style={styles.container}>
-
-            <Text>
-              {this.state.siteName ? `Your Site: ${this.state.siteName}` : `Retrieving ... `}
-            </Text>
-            <Text>
-              {this.state.siteName ? `Your Site: ${this.state.siteAdress}` : `Retrieving ... `}
-            </Text>
-              
+    
               <TouchableOpacity 
               style={{position: 'absolute',right: 20,top: 60}}
               onPress={this.logout}>
       
               </TouchableOpacity>
+
+               
+
               <TouchableOpacity
-   style={{
-       borderWidth:1,
-       borderColor:'rgba(0,0,0,0.2)',
-       alignItems:'center',
-       justifyContent:'center',
-       width:170,
-       height:170,
-       backgroundColor: this.state.submitted == false ? '#eb6e3d' : 'green',
-       borderRadius:100,
-       shadowColor: 'rgba(0,0,0, .4)', // IOS
-       shadowOffset: { height: 1, width: 1 }, // IOS
-       shadowOpacity: 1, // IOS
-       shadowRadius: 1, //IOS
-       elevation: 5, // Android
-     }}
-    onPress = {this.handleButton}
- >
-   {this.state.submitted == false ? <Entypo name= "location" size={60} color="white" /> : <Entypo name="check" size={70} color="white" />}
- </TouchableOpacity>
+                style={{
+                borderWidth:1,
+                borderColor:'rgba(0,0,0,0.2)',
+                alignItems:'center',
+                justifyContent:'center',
+                width:170,
+                height:170,
+                backgroundColor: this.state.submitted == false ? '#eb6e3d' : 'green',
+                borderRadius:100,
+                shadowColor: 'rgba(0,0,0, .4)', // IOS
+                shadowOffset: { height: 1, width: 1 }, // IOS
+                shadowOpacity: 1, // IOS
+                shadowRadius: 1, //IOS
+                elevation: 5, // Android
+              }}
+              onPress = {this.handleButton}
+              >
+                {this.state.submitted == false ? <Entypo name= "location" size={60} color="white" /> : <Entypo name="check" size={70} color="white" />}
+              </TouchableOpacity>
+
+
+    
+
+
             </View>
             </React.Fragment>
           );
@@ -293,6 +376,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    
   },
   logout:{
     
@@ -301,5 +385,16 @@ const styles = StyleSheet.create({
       marginTop: -5,
       //position: 'absolute', // add if dont work with above
     
+  },
+  titleText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginTop: '5%',
+  },
+  subTitleText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    //marginTop: '5%',
+    fontStyle: 'italic'
   }
 });
