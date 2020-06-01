@@ -24,6 +24,8 @@ class Home extends Component {
     firstName:'',
     lastName:'',
     workId:'',
+    email: 'fauslyfox110@gmail.com', //for now swap email to see effect
+    phone: '',
     submitted:false,
     polygonPoints: [
       {  latitude: 40.7557, longitude: -73.9457 }
@@ -37,8 +39,10 @@ class Home extends Component {
       },
     proximity:null,
     hasLocationPermission: null,
-    proximityMax:50,
+    proximityMax:200,
     siteId:1000,
+    siteName: null,
+    siteAdress:null,
     siteLocation: { latitude: 40.7635514, longitude: -73.9289525  }
   }
 
@@ -59,11 +63,41 @@ class Home extends Component {
       }
 
     
-
+    this.getSiteData();
     this.readUserData();
     this.getLocationsPermissions();
 
   }
+
+    //get site data information //this will have to eventually run globally using redux
+    getSiteData = () => {
+      //console.log('retrieving site data with email:', this.state.email);
+      fetch(`http://${myIp}:3002/siteinfo/${this.state.email}`)
+        .then(res => res.json())
+        .then(res => {
+        //console.log(res["data"][0])
+        this.setState({ siteName: res["data"][0].site_name,
+                        siteId : res["data"][0].site_id,
+                        siteAdress : res["data"][0].site_address
+                      })
+
+                      this.setState(prevState => ({
+                        siteLocation: {                   // object that we want to update
+                                  ...prevState.siteLocation,    // keep all other key-value pairs
+                                  latitude: res["data"][0].latitude,
+                                  longitude: res["data"][0].longitude       // update the value of specific key
+                              }
+                          }))
+        
+        
+        })
+
+
+        
+
+        
+
+    }
 
     //ask for location permissions 
     getLocationsPermissions = async () => {
@@ -116,6 +150,7 @@ class Home extends Component {
     console.log('user data:',snapshot.val());    
     let data = snapshot.val()//[this.uid]
 
+
         //console.log('our data: ',data);
         this.setState({ firstName: data.firstName,
                         lastName: data.lastName,
@@ -159,7 +194,7 @@ class Home extends Component {
                                   accuracy = 1);
       console.log('distance: ',distance);
       
-      //validate that location is close enough to the site (50 meters)
+      //validate that location is close enough to the site (200 meters)
       if (distance <= this.state.proximityMax) {
         //if it is send data to database
         //this.getCurrentLoc();
@@ -200,10 +235,19 @@ class Home extends Component {
 
     render(){
 
+
         return (
           <React.Fragment>
             <PageTemplate title={'Home'} logout = {this.logout}/>
+            
             <View style={styles.container}>
+
+            <Text>
+              {this.state.siteName ? `Your Site: ${this.state.siteName}` : `Retrieving ... `}
+            </Text>
+            <Text>
+              {this.state.siteName ? `Your Site: ${this.state.siteAdress}` : `Retrieving ... `}
+            </Text>
               
               <TouchableOpacity 
               style={{position: 'absolute',right: 20,top: 60}}

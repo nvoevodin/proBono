@@ -2,9 +2,9 @@
   "devToolsPort": 19002,
   "expoServerPort": 19000,
   "packagerPort": 19001,
-  "packagerPid": 7740,
+  "packagerPid": 10451,
   "expoServerNgrokUrl": "https://48-hrw.anonymous.probono.exp.direct",
   "packagerNgrokUrl": "https://packager.48-hrw.anonymous.probono.exp.direct",
-  "ngrokPid": 7750,
+  "ngrokPid": 10461,
   "webpackServerPort": null
 }
