@@ -1,10 +1,19 @@
 {
   "devToolsPort": 19002,
+<<<<<<< HEAD
   "expoServerPort": null,
   "packagerPort": null,
   "packagerPid": null,
   "expoServerNgrokUrl": null,
   "packagerNgrokUrl": null,
   "ngrokPid": null,
+=======
+  "expoServerPort": 19000,
+  "packagerPort": 19001,
+  "packagerPid": 15133,
+  "expoServerNgrokUrl": "https://48-hrw.anonymous.probono.exp.direct",
+  "packagerNgrokUrl": "https://packager.48-hrw.anonymous.probono.exp.direct",
+  "ngrokPid": 15143,
+>>>>>>> ef9ca329ff0dc6e63a90f5a96847980e34e6e91c
   "webpackServerPort": null
 }
