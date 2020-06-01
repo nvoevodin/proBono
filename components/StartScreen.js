@@ -17,7 +17,7 @@ class Help extends Component {
     componentDidMount() {
       
       firebase.auth().onAuthStateChanged(user => {
-       console.log(user)
+       //console.log(user)
         // user ? this.registerForPushNotificationsAsync(user) : '',
         // console.log(firebase.auth().currentUser.email)
         if (user) {

@@ -3,7 +3,7 @@ import { StyleSheet, Text, Alert} from 'react-native';
 import {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 import * as firebase from 'firebase';
 
-
+const myIp =  '192.168.2.7' //'192.168.1.183' 
 
 
 class SignUp extends Component {
@@ -30,7 +30,7 @@ class SignUp extends Component {
                 lastName
           }).then((data)=>{
               //success callback
-              console.log('data ' , data)
+             //console.log('data ' , data)
           }).catch((error)=>{
               //error callback
               // console.log('error ' , error)
@@ -40,28 +40,49 @@ class SignUp extends Component {
 
 
     handleSignUp = (email, password) => {
+     
+
+      fetch(`http://${myIp}:3002/validate/${email}`)
+        .then(res => res.json())
+        .then(res => {
+ 
+          if (res.data[0].id === email){
+
+            if(this.state.password.length < 6){
+                alert("Must be minimum 6 characters!")
+                return;
+            }
+            firebase.auth().createUserWithEmailAndPassword(email,password)
+            .then(()=> firebase.auth().currentUser.sendEmailVerification())
+            .then((user)=>{
+               
+                this.addUser(firebase.auth().currentUser.uid,
+                                this.state.workId, 
+                             this.state.firstName, 
+                             this.state.lastName, 
+                             );
+                            
+              })
+    
+            .catch(error => this.setState({ errorMessage: error.message }))
+    
+            Alert.alert('SUCCESS!','We just emailed you a verification link.',[{text: 'OK'}],{cancelable: false},);
+
+
+          } else {
+            Alert.alert('Access Denied!','You must use your employer-issued ID!',[{text: 'OK'}],{cancelable: false},);
+          }
+            
+            
+        }
+        ).catch(error => Alert.alert('Access Denied!','You must use your employer-issued ID!',[{text: 'OK'}],{cancelable: false},))
+
+        
+ 
 
         
 
-        if(this.state.password.length < 6){
-            alert("Must be minimum 6 characters!")
-            return;
-        }
-        firebase.auth().createUserWithEmailAndPassword(email,password)
-        .then(()=> firebase.auth().currentUser.sendEmailVerification())
-        .then((user)=>{
-           
-            this.addUser(firebase.auth().currentUser.uid,
-                            this.state.workId, 
-                         this.state.firstName, 
-                         this.state.lastName, 
-                         );
-                        
-          })
 
-        .catch(error => this.setState({ errorMessage: error.message }))
-
-        Alert.alert('SUCCESS!','We just emailed you a verification link.',[{text: 'OK'}],{cancelable: false},);
 
 
     }

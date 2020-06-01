@@ -12,7 +12,7 @@ import { getDistance } from 'geolib';
 
 const moment = require('moment');
 import PageTemplate from './subComponents/Header'
-const myIp =  '192.168.1.183' // '192.168.2.7'
+const myIp =  '192.168.2.7' //'192.168.1.183' 
 
 class Home extends Component {
 
@@ -24,7 +24,7 @@ class Home extends Component {
     firstName:'',
     lastName:'',
     workId:'',
-    email: 'fauslyfox110@gmail.com', //for now swap email to see effect
+    email: 'voevodin.nv@gmail.com', //for now swap email to see effect
     phone: '',
     submitted:false,
     polygonPoints: [
@@ -147,7 +147,7 @@ class Home extends Component {
 
   readUserData() {
     firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
-    console.log('user data:',snapshot.val());    
+    //console.log('user data:',snapshot.val());    
     let data = snapshot.val()//[this.uid]
 
 
