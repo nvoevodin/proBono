@@ -4,7 +4,7 @@ import { Container, Button, Content, Card, CardItem, Body } from "native-base";
 import * as firebase from 'firebase';
 import PageTemplate from './subComponents/Header'
 import ChangeInfo from './subComponents/changeInformationModal'
-
+const myIp =  '192.168.2.7' //'192.168.1.183' 
 
 class Profile extends Component {
 
@@ -31,8 +31,19 @@ alert('Change your info here (placeholder)')
     firstName:'',
     lastName:'',
     workId:'',
-    modalVisible: false
+    modalVisible: false,
+    total: null
   }
+
+
+ 
+
+
+
+
+
+
+
 
   showModal =() => {
     this.setState({ modalVisible : !this.state.modalVisible })
@@ -42,6 +53,9 @@ alert('Change your info here (placeholder)')
   componentDidMount() {
 
     this.readUserData()
+
+
+
 
   }
 
@@ -56,6 +70,14 @@ alert('Change your info here (placeholder)')
         this.setState({ firstName: data.firstName,
                         lastName: data.lastName,
                         workId: data.workId});
+
+                        fetch(`http://${myIp}:3002/checkins/${data.workId}`)
+                        .then(res => res.json())
+                        .then(res => {
+                    console.log(res.data[0]['total'])
+                    this.setState({total:res.data[0]['total']})
+                    
+                        })
        
         
 
@@ -83,10 +105,10 @@ alert('Change your info here (placeholder)')
                     Last Name: {this.state.lastName}
                   </Text>
                   <Text>
-                    Some Stat: 7
+                    Some Stat: soon...
                   </Text>
                   <Text>
-                    Some Stat: 464
+                    Total Check Ins: {this.state.total}
                   </Text>
                 </Body>
               </CardItem>
