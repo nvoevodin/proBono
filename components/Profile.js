@@ -32,7 +32,8 @@ alert('Change your info here (placeholder)')
     lastName:'',
     workId:'',
     modalVisible: false,
-    total: null
+    total: null,
+    totalWeek: null
   }
 
 
@@ -77,7 +78,17 @@ alert('Change your info here (placeholder)')
                     console.log(res.data[0]['total'])
                     this.setState({total:res.data[0]['total']})
                     
-                        })
+                        }).catch(error => this.setState({totalWeek: 0}))
+
+                        fetch(`http://${myIp}:3002/checkinsWeek/${data.workId}`)
+                        .then(res => res.json())
+                        .then(res => {
+                    console.log(res)
+                    this.setState({totalWeek:res.data[0]['count_ins']})
+                    
+                        }).catch(error => {
+                          console.log(error)
+                          this.setState({totalWeek: 0})})
        
         
 
@@ -105,10 +116,10 @@ alert('Change your info here (placeholder)')
                     Last Name: {this.state.lastName}
                   </Text>
                   <Text>
-                    Some Stat: soon...
+                    Check-Ins This Week: {this.state.totalWeek}
                   </Text>
                   <Text>
-                    Total Check Ins: {this.state.total}
+                    Total Check-Ins: {this.state.total}
                   </Text>
                 </Body>
               </CardItem>

@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View , TouchableOpacity, Alert} from 'react-native';
-//import {Button} from 'native-base';
+import { StyleSheet, Text, View , TouchableOpacity, Alert,ImageBackground,} from 'react-native';
+import {Button} from 'native-base';
 import * as firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons';
 import { Entypo } from '@expo/vector-icons'; 
@@ -9,6 +9,8 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import Layout from '../constants/Layout';
+
+import background from '../assets/background.png'
 
 const moment = require('moment');
 import PageTemplate from './subComponents/Header'
@@ -271,69 +273,28 @@ class Home extends Component {
           <React.Fragment>
             <PageTemplate title={'Home'} logout = {this.logout}/>
 
-            <View 
-              style={{
-                marginLeft: 20
-              }}
-            >
+            <View style={styles.bubble}>
               <Text style={styles.titleText}>
-                Your Site:
+                Site: {this.state.siteName ? `${this.state.siteName}` : `Retrieving ... `}
               </Text>
-              <Text style ={styles.subTitleText}>
-                {this.state.siteName ? `${this.state.siteName}` : `Retrieving ... `}
-              </Text>
+  
             </View>
 
-            <View
-              style={{
-                marginLeft: 20
-              }}
-            >
+            {/* <View style={styles.bubble1}>
               <Text style={styles.titleText}>
-                Site Address:
+                Address: {this.state.siteName ? `${this.state.siteAdress}` : `Retrieving ... `}
               </Text>
-              <Text style ={styles.subTitleText}>
-                {this.state.siteName ? `${this.state.siteAdress}` : `Retrieving ... `}
-              </Text>
+  
 
-            </View>
+            </View> */}
 
-            {/**pre-checkin button */}
-            <TouchableOpacity
-              onPress={this.preCheckin}
-              style={{
-                marginTop:10,
-                marginLeft: 20,
-                borderWidth:1,
-                borderColor:'rgba(0,0,0,0.2)',
-                alignItems:'center',
-                justifyContent:'center',
-                width:30,
-                height:30,
-                backgroundColor: this.state.preSubmitted == false ? '#eb6e3d' : 'green',
-                borderRadius:100,
-                shadowColor: 'rgba(0,0,0, .4)', // IOS
-                shadowOffset: { height: 1, width: 1 }, // IOS
-                shadowOpacity: 1, // IOS
-                shadowRadius: 1, //IOS
-                elevation: 5, // Android
-              }}
-            >
-              {this.state.preSubmitted == false ? <Entypo name= "location" size={15} color="white" /> : <Entypo name="check" size={15} color="white" />}
-            </TouchableOpacity>
+
             
             <View style={styles.container}>
     
-              <TouchableOpacity 
-              style={{position: 'absolute',right: 20,top: 60}}
-              onPress={this.logout}>
-      
-              </TouchableOpacity>
-
-               
-
-              <TouchableOpacity
+            <TouchableOpacity
                 style={{
+                  position: 'absolute',
                 borderWidth:1,
                 borderColor:'rgba(0,0,0,0.2)',
                 alignItems:'center',
@@ -346,18 +307,33 @@ class Home extends Component {
                 shadowOffset: { height: 1, width: 1 }, // IOS
                 shadowOpacity: 1, // IOS
                 shadowRadius: 1, //IOS
-                elevation: 5, // Android
+                elevation: 15, // Android
+                
               }}
               onPress = {this.handleButton}
               >
-                {this.state.submitted == false ? <Entypo name= "location" size={60} color="white" /> : <Entypo name="check" size={70} color="white" />}
+                
+                {this.state.submitted == false ? <Entypo  name= "location" size={60} color="white" /> : <Entypo name="check" size={70} color="white" />}
               </TouchableOpacity>
-
+            <ImageBackground source={background} style={styles.image}>
+               
 
     
 
 
+    
+              </ImageBackground>
+
             </View>
+
+            <Button style ={{margin:10, backgroundColor:'#ebf2f2'}}
+                    full
+                    rounded
+                    
+                    onPress={this.preCheckin}>
+
+                        <Text style = {{color:'black', fontWeight:'bold'}}>Pre-CheckIn</Text>
+                    </Button>
             </React.Fragment>
           );
 
@@ -387,14 +363,46 @@ const styles = StyleSheet.create({
     
   },
   titleText: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginTop: '5%',
-  },
-  subTitleText: {
     fontSize: 15,
     fontWeight: 'bold',
-    //marginTop: '5%',
-    fontStyle: 'italic'
-  }
+    color: 'white'
+    
+  },
+  bubble:{
+    position: 'absolute',
+    top: 74,
+    alignItems: 'center',
+    justifyContent: 'center', width: '36%', height: '6%',
+      marginLeft: '32%', marginRight:'32%', 
+      padding: 5, borderRadius: 30, paddingBottom: 5,
+      backgroundColor:  '#4aa0cf',
+      shadowColor: '#499ecc', // IOS
+      shadowOffset: { height: 6, width: 2 }, // IOS
+      shadowOpacity: 1, // IOS
+      shadowRadius: 1, //IOS
+      elevation: 15, // Android
+  },
+  bubble1:{
+    position: 'absolute',
+    top: 120,
+    alignItems: 'center',
+    justifyContent: 'center', width: '80%', height: '4%',
+      margin: 6,
+      padding: 5, borderRadius: 20, paddingBottom: 5,
+      backgroundColor:  '#4aa0cf',
+      shadowColor: '#499ecc', // IOS
+      shadowOffset: { height: 6, width: 2 }, // IOS
+      shadowOpacity: 1, // IOS
+      shadowRadius: 1, //IOS
+      elevation: 5, // Android
+  },
+  image: {
+    
+   
+    resizeMode: "cover",
+    justifyContent: "center",
+    width: '100%',
+    height: '100%',
+    opacity: 0.19
+  },
 });
