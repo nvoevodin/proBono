@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, LayoutAnimation, Platform, UIManager} from "react-native";
 //import Icon from "react-native-vector-icons/MaterialIcons";
 import { Ionicons } from '@expo/vector-icons';
+import Layout from '../../constants/Layout';
 
 const Colors = {
     PRIMARY:'#1abc9c',
@@ -59,6 +60,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight:'bold',
         color: Colors.DARKGRAY,
+        width: Layout.window.width - 40,
     },
     row:{
         flexDirection: 'row',
