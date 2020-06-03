@@ -34,7 +34,7 @@ export default class Accordian extends Component{
             <TouchableOpacity ref={this.accordian} style={styles.row} onPress={()=>this.toggleExpand()}>
                 <Text style={[styles.title, styles.font]}>{this.props.title}</Text>
                 
-                <Ionicons name={this.state.expanded ? 'ios-arrow-dropup-circle' : 'ios-arrow-dropdown'} size={30} color={Colors.DARKGRAY} />
+                <Ionicons style={styles.button} name={this.state.expanded ? 'ios-arrow-dropup-circle' : 'ios-arrow-dropdown'} size={30} color={Colors.DARKGRAY} />
             </TouchableOpacity>
             <View style={styles.parentHr}/>
             {
@@ -60,7 +60,7 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight:'bold',
         color: Colors.DARKGRAY,
-        width: Layout.window.width - 40,
+        width: Layout.window.width - 50,
     },
     row:{
         flexDirection: 'row',
@@ -78,7 +78,16 @@ const styles = StyleSheet.create({
     },
     child:{
         backgroundColor: Colors.LIGHTGRAY,
-        padding:16,
+        padding:25,
+        //justifyContent: 'center',
+        //alignItems: 'center',
+    },
+    button: {
+        marginRight: 10
+    },
+    childText: {
+        justifyContent: 'center',
+        alignItems: 'center',
     }
     
 });
