@@ -1,9 +1,5 @@
 import React, {Component} from 'react';
-<<<<<<< HEAD
-import { StyleSheet, Text, View , TouchableOpacity, Alert,ImageBackground,ActivityIndicator} from 'react-native';
-=======
 import { StyleSheet, Text, View , TouchableOpacity, Alert,ImageBackground,Animated, Easing} from 'react-native';
->>>>>>> 72fde34c7d6876e989b953d4f0864409d09e9514
 import {Button} from 'native-base';
 import * as firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,12 +9,13 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import { getDistance } from 'geolib';
 import Layout from '../constants/Layout';
+import * as Animatable from "react-native-animatable";
 
 import background from '../assets/background.png'
 
 const moment = require('moment');
 import PageTemplate from './subComponents/Header'
-const myIp =  '192.168.1.183' //'192.168.2.7'  
+const myIp =  '192.168.2.7' //  
 
 class Home extends Component {
 
@@ -77,14 +74,14 @@ class Home extends Component {
 
   }
 
-    handleAnimation = () => {
-      console.log('starting to transform')
-      Animated.timing(this.state.animatedValue, {
-        toValue: 1,
-        duration: 1000,
-        easing: Easing.ease
-      }).start()
-    }
+    // handleAnimation = () => {
+    //   console.log('starting to transform')
+    //   Animated.timing(this.state.animatedValue, {
+    //     toValue: 1,
+    //     duration: 1000,
+    //     easing: Easing.ease
+    //   }).start()
+    // }
 
     //get site data information //this will have to eventually run globally using redux
     getSiteData = () => {
@@ -239,8 +236,9 @@ class Home extends Component {
 
 
   handleButton = async () =>{
-
+    
     if (this.state.submitted === false) {
+      this.setState({submitted:true});
     try {    
       //get location
       let location = await this.getCurrentLoc();
@@ -271,10 +269,10 @@ class Home extends Component {
             ).catch(err => console.error(err));
 
           //close animation
-          this.handleAnimation();
+          //this.handleAnimation();
 
           //show checkin as done
-          this.setState({submitted:true});
+          
           
           
       } else {
@@ -284,6 +282,7 @@ class Home extends Component {
     } catch (e) {
       console.log(e);
     }
+    this.setState({submitted:false});
 
   } else {
 
@@ -343,7 +342,10 @@ class Home extends Component {
                 {this.state.submitted == false ? <Entypo  name= "location" size={60} color="white" /> : <Entypo name="check" size={70} color="white" />}
               </TouchableOpacity>
             {/*<ImageBackground source={background} style={styles.image}> </ImageBackground>*/}
+            {this.state.submitted == false ?
+            <Animatable.View animation = 'zoomIn'>
             <Animated.Image
+            
                     source={background}
                     resizeMode='cover'
                     style={{
@@ -386,8 +388,53 @@ class Home extends Component {
                         ]
                     }}
                 />
- 
-
+ </Animatable.View> :
+            <Animatable.View animation = 'zoomOut'>
+            <Animated.Image
+            
+                    source={background}
+                    resizeMode='cover'
+                    style={{
+                        //marginTop:100,
+                        //position: 'absolute',
+                        //left: 40,
+                        //top: 100,
+                        //height: 100,
+                        //width: 100,
+                        zIndex: 0,
+                        justifyContent: "center",
+                        width: 110,
+                        height: 110,
+                        opacity: 0.19,
+                        transform: [
+                            {
+                                translateX: this.state.animatedValue.interpolate({
+                                    inputRange: [0, 100],
+                                    outputRange: [0,1]
+                                })
+                            },
+                            {
+                                translateY: this.state.animatedValue.interpolate({
+                                    inputRange: [0, 100],
+                                    outputRange: [0, 1]
+                                })
+                            },
+                            {
+                                scaleX: this.state.animatedValue.interpolate({
+                                    inputRange: [1, 15],
+                                    outputRange: [0, 1]
+                                })
+                            },
+                            {
+                                scaleY: this.state.animatedValue.interpolate({
+                                    inputRange: [1, 15],
+                                    outputRange: [0, 1]
+                                })
+                            }
+                        ]
+                    }}
+                />
+ </Animatable.View>}
     
 
 
@@ -396,16 +443,12 @@ class Home extends Component {
 
             </View>
 
-<<<<<<< HEAD
             <Button 
             style ={{margin:10, backgroundColor:'#ebf2f2', shadowColor: 'black', // IOS
       shadowOffset: { height: 4, width: 0 }, // IOS
       shadowOpacity: 0.4, // IOS
       shadowRadius: 1, //IOS
     }}
-=======
-            <Button style ={{margin:10, backgroundColor: this.state.preSubmitted == false ? '#ebf2f2' : 'green'}}
->>>>>>> 72fde34c7d6876e989b953d4f0864409d09e9514
                     full
                     rounded
                     
