@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View , TouchableOpacity, Alert,ImageBackground,} from 'react-native';
+import { StyleSheet, Text, View , TouchableOpacity, Alert,ImageBackground,ActivityIndicator} from 'react-native';
 import {Button} from 'native-base';
 import * as firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons';
@@ -326,7 +326,12 @@ class Home extends Component {
 
             </View>
 
-            <Button style ={{margin:10, backgroundColor:'#ebf2f2'}}
+            <Button 
+            style ={{margin:10, backgroundColor:'#ebf2f2', shadowColor: 'black', // IOS
+      shadowOffset: { height: 4, width: 0 }, // IOS
+      shadowOpacity: 0.4, // IOS
+      shadowRadius: 1, //IOS
+    }}
                     full
                     rounded
                     
