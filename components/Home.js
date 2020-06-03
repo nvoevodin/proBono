@@ -370,17 +370,18 @@ const styles = StyleSheet.create({
   },
   bubble:{
     position: 'absolute',
-    top: 74,
+    top: '8.5%',
     alignItems: 'center',
     justifyContent: 'center', width: '36%', height: '6%',
       marginLeft: '32%', marginRight:'32%', 
       padding: 5, borderRadius: 30, paddingBottom: 5,
       backgroundColor:  '#4aa0cf',
-      shadowColor: '#499ecc', // IOS
-      shadowOffset: { height: 6, width: 2 }, // IOS
-      shadowOpacity: 1, // IOS
+      shadowColor: 'black', // IOS
+      shadowOffset: { height: 4, width: 0 }, // IOS
+      shadowOpacity: 0.5, // IOS
       shadowRadius: 1, //IOS
       elevation: 15, // Android
+      zIndex: 9999,
   },
   bubble1:{
     position: 'absolute',
