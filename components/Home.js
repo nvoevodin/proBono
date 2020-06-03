@@ -308,7 +308,7 @@ class Home extends Component {
                 shadowOpacity: 1, // IOS
                 shadowRadius: 1, //IOS
                 elevation: 15, // Android
-                
+                zIndex: 1
               }}
               onPress = {this.handleButton}
               >
@@ -399,7 +399,7 @@ const styles = StyleSheet.create({
   image: {
     
    
-    resizeMode: "cover",
+    zIndex: 0,
     justifyContent: "center",
     width: '100%',
     height: '100%',
