@@ -1,5 +1,9 @@
 import React, {Component} from 'react';
+<<<<<<< HEAD
 import { StyleSheet, Text, View , TouchableOpacity, Alert,ImageBackground,ActivityIndicator} from 'react-native';
+=======
+import { StyleSheet, Text, View , TouchableOpacity, Alert,ImageBackground,Animated, Easing} from 'react-native';
+>>>>>>> 72fde34c7d6876e989b953d4f0864409d09e9514
 import {Button} from 'native-base';
 import * as firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,7 +18,7 @@ import background from '../assets/background.png'
 
 const moment = require('moment');
 import PageTemplate from './subComponents/Header'
-const myIp =  '192.168.2.7' //'192.168.1.183' 
+const myIp =  '192.168.1.183' //'192.168.2.7'  
 
 class Home extends Component {
 
@@ -26,7 +30,7 @@ class Home extends Component {
     firstName:'',
     lastName:'',
     workId:'',
-    email: 'voevodin.nv@gmail.com', //for now swap email to see effect
+    email: 'voevodin.nv@gmail.com',//'fauslyfox110@gmail.com', //for now swap email to see effect
     phone: '',
     submitted:false,
     preSubmitted:false,
@@ -46,7 +50,8 @@ class Home extends Component {
     siteId:1000,
     siteName: null,
     siteAdress:null,
-    siteLocation: { latitude: 40.7635514, longitude: -73.9289525  }
+    siteLocation: { latitude: 40.7635514, longitude: -73.9289525  },
+    animatedValue: new Animated.Value(70)
   }
 
 
@@ -71,6 +76,15 @@ class Home extends Component {
     this.getLocationsPermissions();
 
   }
+
+    handleAnimation = () => {
+      console.log('starting to transform')
+      Animated.timing(this.state.animatedValue, {
+        toValue: 1,
+        duration: 1000,
+        easing: Easing.ease
+      }).start()
+    }
 
     //get site data information //this will have to eventually run globally using redux
     getSiteData = () => {
@@ -180,45 +194,53 @@ class Home extends Component {
   }
 
   preCheckin = async () => {
-    console.log('prechecking...')
-    try {    
-      //get location
-      let location = await this.getCurrentLoc();
-      console.log(parseFloat(location[0].coords.latitude));
-      console.log(parseFloat(location[0].coords.longitude));
-      
-      //test how far away the user is
-      let distance = await getDistance(
-                                 { latitude: parseFloat(location[0].coords.latitude), longitude: parseFloat(location[0].coords.longitude)  },
-                                 { latitude: this.state.siteLocation.latitude, longitude: this.state.siteLocation.longitude  },
-                                  accuracy = 1);
-      console.log('distance: ',distance);
-      
-      //send data
-        fetch(
-          // MUST USE YOUR LOCALHOST ACTUAL IP!!! NOT http://localhost...
-          `http://${myIp}:3002/add?time=${moment().utcOffset('-0500').format("YYYY-MM-DD HH:mm:ss").substr(0, 18) + '0'
-            }&site_id=${"B10002"}&first_name=${this.state.firstName}
-            &last_name=${this.state.lastName}&user_id=${this.state.workId}
-            &latitude=${this.state.userLocation.latitude}
-            &longitude=${this.state.userLocation.longitude}
-            &checkin_type=1
-            &distance=${distance}`,
-            { method: "POST" }
-            ).catch(err => console.error(err));
+    if (this.state.preSubmitted === false) {
 
-          //show checkin as done
-          this.setState({preSubmitted:true})
+      console.log('prechecking...')
+      try {    
+        //get location
+        let location = await this.getCurrentLoc();
+        console.log(parseFloat(location[0].coords.latitude));
+        console.log(parseFloat(location[0].coords.longitude));
+        
+        //test how far away the user is
+        let distance = await getDistance(
+                                   { latitude: parseFloat(location[0].coords.latitude), longitude: parseFloat(location[0].coords.longitude)  },
+                                   { latitude: this.state.siteLocation.latitude, longitude: this.state.siteLocation.longitude  },
+                                    accuracy = 1);
+        console.log('distance: ',distance);
+        
+        //send data
+          fetch(
+            // MUST USE YOUR LOCALHOST ACTUAL IP!!! NOT http://localhost...
+            `http://${myIp}:3002/add?time=${moment().utcOffset('-0500').format("YYYY-MM-DD HH:mm:ss").substr(0, 18) + '0'
+              }&site_id=${"B10002"}&first_name=${this.state.firstName}
+              &last_name=${this.state.lastName}&user_id=${this.state.workId}
+              &latitude=${this.state.userLocation.latitude}
+              &longitude=${this.state.userLocation.longitude}
+              &checkin_type=1
+              &distance=${distance}`,
+              { method: "POST" }
+              ).catch(err => console.error(err));
+  
+            //show checkin as done
+            this.setState({preSubmitted:true})
+            Alert.alert('Thank you for pre-checkin, do not forget to checkin!')
+      } catch (e) {
+        console.log(e);
+      }
 
-    } catch (e) {
-      console.log(e);
+    } else {
+
+      Alert.alert('You have already done a pre-checkin!')
     }
-
   }
 
 
 
   handleButton = async () =>{
+
+    if (this.state.submitted === false) {
     try {    
       //get location
       let location = await this.getCurrentLoc();
@@ -248,20 +270,25 @@ class Home extends Component {
             { method: "POST" }
             ).catch(err => console.error(err));
 
-          //show checkin as done
-          this.setState({submitted:true})
+          //close animation
+          this.handleAnimation();
 
+          //show checkin as done
+          this.setState({submitted:true});
+          
+          
       } else {
         //console.log('something went wrong');
-        Alert.alert('Please contact customer service')
+        Alert.alert('Please move closer to your site and try again.')
       }
     } catch (e) {
       console.log(e);
     }
 
+  } else {
 
-    
-
+    Alert.alert('You have already checked in. If you think this is a mistake contact our app support team under the help page.');
+  }
     
   }
 
@@ -315,23 +342,70 @@ class Home extends Component {
                 
                 {this.state.submitted == false ? <Entypo  name= "location" size={60} color="white" /> : <Entypo name="check" size={70} color="white" />}
               </TouchableOpacity>
-            <ImageBackground source={background} style={styles.image}>
-               
+            {/*<ImageBackground source={background} style={styles.image}> </ImageBackground>*/}
+            <Animated.Image
+                    source={background}
+                    resizeMode='cover'
+                    style={{
+                        //marginTop:100,
+                        //position: 'absolute',
+                        //left: 40,
+                        //top: 100,
+                        //height: 100,
+                        //width: 100,
+                        zIndex: 0,
+                        justifyContent: "center",
+                        width: 110,
+                        height: 110,
+                        opacity: 0.19,
+                        transform: [
+                            {
+                                translateX: this.state.animatedValue.interpolate({
+                                    inputRange: [0, 100],
+                                    outputRange: [0,1]
+                                })
+                            },
+                            {
+                                translateY: this.state.animatedValue.interpolate({
+                                    inputRange: [0, 100],
+                                    outputRange: [0, 1]
+                                })
+                            },
+                            {
+                                scaleX: this.state.animatedValue.interpolate({
+                                    inputRange: [1, 15],
+                                    outputRange: [0, 1]
+                                })
+                            },
+                            {
+                                scaleY: this.state.animatedValue.interpolate({
+                                    inputRange: [1, 15],
+                                    outputRange: [0, 1]
+                                })
+                            }
+                        ]
+                    }}
+                />
+ 
 
     
 
 
     
-              </ImageBackground>
+              
 
             </View>
 
+<<<<<<< HEAD
             <Button 
             style ={{margin:10, backgroundColor:'#ebf2f2', shadowColor: 'black', // IOS
       shadowOffset: { height: 4, width: 0 }, // IOS
       shadowOpacity: 0.4, // IOS
       shadowRadius: 1, //IOS
     }}
+=======
+            <Button style ={{margin:10, backgroundColor: this.state.preSubmitted == false ? '#ebf2f2' : 'green'}}
+>>>>>>> 72fde34c7d6876e989b953d4f0864409d09e9514
                     full
                     rounded
                     

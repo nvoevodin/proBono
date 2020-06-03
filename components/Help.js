@@ -33,7 +33,7 @@ class Help extends Component {
         },
         { 
          title: 'I am not receiving payment despite showing up to work. What should I do?',
-         data: 'A drink (or beverage) is a liquid intended for human consumption. In addition to their basic function of satisfying thirst, drinks play important roles in human culture. Common types of drinks include plain drinking water, milk, coffee, tea, hot chocolate, juice and soft drinks. In addition, alcoholic drinks such as wine, beer, and liquor, which contain the drug ethanol, have been part of human culture for more than 8,000 years.'
+         data: 'A drink (or beverage) is a liquid intended for human consumption.'
         },
         { 
           title: 'I have another question?',
@@ -63,6 +63,7 @@ class Help extends Component {
           
           <React.Fragment>
             <PageTemplate title={'Help'} logout = {this.logout}/>
+            <ScrollView>
             <View style={styles.container}>
               <Text style={styles.titleText}>
                 General
@@ -107,17 +108,17 @@ class Help extends Component {
                   If you are unable to resolve your issue using the information on this page please send an email to the following.
                 </Text>
 
-                
+                <View style={{marginTop: 10}}>
                 {/** FIRST CONTACT*/}
                 <View style={styles.linkContainer}>
                   <Text>
                     Issues with your case: 
                   </Text>
                   <TouchableOpacity
-                    style={{marginLeft: 10}}
+                    style={[styles.helpButton, {marginLeft: 10}]}
                     onPress={() => Linking.openURL('mailto:support@example.com?subject=SendMail&body=Description')}
                   >
-                    <Ionicons name="ios-mail" size={30} color="black" />
+                    <Ionicons name="ios-mail" size={28} color="black" />
                   </TouchableOpacity>
                   
                 </View>
@@ -130,16 +131,18 @@ class Help extends Component {
                   </Text>
 
                   <TouchableOpacity
-                    style={{marginLeft: 22}}
+                    style={[styles.helpButton, {marginLeft: 22}]}
                     onPress={() => Linking.openURL('mailto:support@example.com?subject=SendMail&body=Description')}
                   >
-                  <Ionicons name="ios-mail" size={30} color="black" />
+                  <Ionicons name="ios-mail" size={28} color="black" />
                 </TouchableOpacity>
+                </View>
                 </View>
 
               </View>
               
             </View>
+            </ScrollView>
             </React.Fragment>
         
           );
@@ -161,7 +164,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     width: Layout.window.width - 20,
     marginLeft:10
-    
   },
   accordianContainer: {
     //flex:1,
@@ -181,13 +183,30 @@ const styles = StyleSheet.create({
     marginTop:5, 
   },
   linkContainer: {
-    marginTop: 5,
+    marginTop: 7,
     flexDirection: 'row',
     //paddingVertical: 15,
     //paddingHorizontal: 5,
     flexDirection: "row",
     //justifyContent: "space-between",
     alignItems: "center"
+  },
+  helpButton: {
+                      //position: 'absolute',
+                      borderWidth:1,
+                      borderColor:'rgba(0,0,0,0.2)',
+                      alignItems:'center',
+                      justifyContent:'center',
+                      width:35,
+                      height:35,
+                      backgroundColor: '#FFDF00',
+                      borderRadius:100,
+                      shadowColor: 'rgba(0,0,0, .4)', // IOS
+                      shadowOffset: { height: 1, width: 1 }, // IOS
+                      shadowOpacity: 1, // IOS
+                      shadowRadius: 1, //IOS
+                      elevation: 15, // Android
+                      zIndex: 1
   }
 
 });
