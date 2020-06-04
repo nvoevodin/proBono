@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View , TouchableOpacity, Alert,ImageBackground,Animated, Easing} from 'react-native';
+import { StyleSheet, Text, View , TouchableOpacity, Alert,ImageBackground,Animated, ActivityIndicator} from 'react-native';
 import {Button} from 'native-base';
 import * as firebase from 'firebase';
 import { Ionicons } from '@expo/vector-icons';
@@ -193,7 +193,7 @@ class Home extends Component {
 
   preCheckin = async () => {
     if (this.state.preSubmitted === false) {
-
+      this.setState({submittedAnimation:true});
       console.log('prechecking...')
       try {    
         //get location
@@ -227,7 +227,7 @@ class Home extends Component {
       } catch (e) {
         console.log(e);
       }
-
+      this.setState({submittedAnimation:false});
     } else {
 
       Alert.alert('You have already done a pre-checkin!')
@@ -299,7 +299,7 @@ class Home extends Component {
         return (
           <React.Fragment>
             <PageTemplate title={'Home'} logout = {this.logout}/>
-
+<View style = {styles.container}>
             <View style={styles.bubble}>
               <Text style={styles.titleText}>
                 Site: {this.state.siteName ? `${this.state.siteName}` : `Retrieving ... `}
@@ -320,7 +320,7 @@ class Home extends Component {
             <View style={styles.container}>
     
             <TouchableOpacity
-            disabled={this.state.submitted}
+            //disabled={this.state.submitted}
                 style={{
                   position: 'absolute',
                 borderWidth:1,
@@ -458,6 +458,15 @@ class Home extends Component {
 
                         <Text style = {{color:'black', fontWeight:'bold'}}>Pre-CheckIn</Text>
                     </Button>
+
+                    {this.state.submittedAnimation && 
+                    <View style={styles.loading}>
+      <ActivityIndicator animating = {this.state.submittedAnimation} style = {{left: '0.5%', bottom: '40%'}} size="large" color="white" />
+ 
+    </View>
+    }
+
+                    </View>
             </React.Fragment>
           );
 
@@ -494,7 +503,7 @@ const styles = StyleSheet.create({
   },
   bubble:{
     position: 'absolute',
-    top: '8.5%',
+    top: '-3.2%',
     alignItems: 'center',
     justifyContent: 'center', width: '36%', height: '6%',
       marginLeft: '32%', marginRight:'32%', 
@@ -530,4 +539,17 @@ const styles = StyleSheet.create({
     height: '100%',
     opacity: 0.19
   },
+
+  loading: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center',
+    height:'100%',
+    backgroundColor:'#666570',
+    opacity:0.8
+  }
 });
