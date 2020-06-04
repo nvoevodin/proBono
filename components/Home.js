@@ -48,6 +48,7 @@ class Home extends Component {
     siteName: null,
     siteAdress:null,
     siteLocation: { latitude: 40.7635514, longitude: -73.9289525  },
+    submittedAnimation: false,
     animatedValue: new Animated.Value(70)
   }
 
@@ -69,7 +70,7 @@ class Home extends Component {
 
     
     this.getSiteData();
-    this.readUserData();
+   // this.readUserData();
     this.getLocationsPermissions();
 
   }
@@ -159,22 +160,22 @@ class Home extends Component {
 
 
 
-  readUserData() {
-    firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
-    //console.log('user data:',snapshot.val());    
-    let data = snapshot.val()//[this.uid]
+  // readUserData() {
+  //   firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
+  //   //console.log('user data:',snapshot.val());    
+  //   let data = snapshot.val()//[this.uid]
 
 
-        //console.log('our data: ',data);
-        this.setState({ firstName: data.firstName,
-                        lastName: data.lastName,
-                        workId: data.workId});
+  //       //console.log('our data: ',data);
+  //       this.setState({ firstName: data.firstName,
+  //                       lastName: data.lastName,
+  //                       workId: data.workId});
        
         
 
-    })
+  //   })
     
-  }
+  // }
 
 
   getCurrentLoc  = async() => {
@@ -238,7 +239,7 @@ class Home extends Component {
   handleButton = async () =>{
     
     if (this.state.submitted === false) {
-      this.setState({submitted:true});
+      this.setState({submittedAnimation:true});
     try {    
       //get location
       let location = await this.getCurrentLoc();
@@ -273,7 +274,7 @@ class Home extends Component {
 
           //show checkin as done
           
-          
+          this.setState({submitted:true})
           
       } else {
         //console.log('something went wrong');
@@ -282,7 +283,7 @@ class Home extends Component {
     } catch (e) {
       console.log(e);
     }
-    this.setState({submitted:false});
+    this.setState({submittedAnimation:false});
 
   } else {
 
@@ -319,6 +320,7 @@ class Home extends Component {
             <View style={styles.container}>
     
             <TouchableOpacity
+            disabled={this.state.submitted}
                 style={{
                   position: 'absolute',
                 borderWidth:1,
@@ -342,7 +344,7 @@ class Home extends Component {
                 {this.state.submitted == false ? <Entypo  name= "location" size={60} color="white" /> : <Entypo name="check" size={70} color="white" />}
               </TouchableOpacity>
             {/*<ImageBackground source={background} style={styles.image}> </ImageBackground>*/}
-            {this.state.submitted == false ?
+            {this.state.submittedAnimation == false ?
             <Animatable.View animation = 'zoomIn'>
             <Animated.Image
             
@@ -357,19 +359,19 @@ class Home extends Component {
                         //width: 100,
                         zIndex: 0,
                         justifyContent: "center",
-                        width: 110,
-                        height: 110,
-                        opacity: 0.19,
+                        width: 80,
+                        height: 80,
+                        opacity: 0.2,
                         transform: [
                             {
                                 translateX: this.state.animatedValue.interpolate({
-                                    inputRange: [0, 100],
+                                    inputRange: [0, 80],
                                     outputRange: [0,1]
                                 })
                             },
                             {
                                 translateY: this.state.animatedValue.interpolate({
-                                    inputRange: [0, 100],
+                                    inputRange: [0, 80],
                                     outputRange: [0, 1]
                                 })
                             },
@@ -403,19 +405,19 @@ class Home extends Component {
                         //width: 100,
                         zIndex: 0,
                         justifyContent: "center",
-                        width: 110,
-                        height: 110,
-                        opacity: 0.19,
+                        width: 80,
+                        height: 80,
+                        opacity: 0.2,
                         transform: [
                             {
                                 translateX: this.state.animatedValue.interpolate({
-                                    inputRange: [0, 100],
+                                    inputRange: [0, 80],
                                     outputRange: [0,1]
                                 })
                             },
                             {
                                 translateY: this.state.animatedValue.interpolate({
-                                    inputRange: [0, 100],
+                                    inputRange: [0, 80],
                                     outputRange: [0, 1]
                                 })
                             },
