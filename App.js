@@ -6,6 +6,13 @@ import { Ionicons } from '@expo/vector-icons';
 
 import * as firebase from 'firebase';
 
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+
+import ourReducer from './store/reducer';
+const store = createStore(ourReducer);
+
+
 //Init Firebase
 const firebaseConfig ={
   apiKey: "AIzaSyB5s1qub81NaHS7nCm-8Qc0ClmiRKWPcok",
@@ -39,7 +46,9 @@ export default class App extends Component {
   render(){
 
     return (
-      <AppContainer/>
+      <Provider store={ store }>
+        <AppContainer/>
+      </Provider>
     );
   
   }

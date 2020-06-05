@@ -1,10 +1,13 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text} from 'react-native';
+import { StyleSheet, Text, View, FlatList, List, Alert } from 'react-native';
 import { Container, Button, Content, Card, CardItem, Body } from "native-base";
 import * as firebase from 'firebase';
 import PageTemplate from './subComponents/Header'
 import ChangeInfo from './subComponents/changeInformationModal'
-const myIp =  '192.168.2.7' //'192.168.1.183' 
+import Layout from '../constants/Layout';
+const myIp =  '192.168.1.183' //'192.168.2.7' //'192.168.1.183' 
+
+import { connect } from 'react-redux';
 
 class Profile extends Component {
 
@@ -30,18 +33,12 @@ alert('Change your info here (placeholder)')
   state = {
     firstName:'',
     lastName:'',
-    workId:'',
     modalVisible: false,
     total: null,
-    totalWeek: null
+    totalWeek: null,
+    showHistory: false,
+    data:null
   }
-
-
- 
-
-
-
-
 
 
 
@@ -52,14 +49,18 @@ alert('Change your info here (placeholder)')
 
 
   componentDidMount() {
-
     this.readUserData()
-
-
-
-
   }
 
+  getCheckinData =() => {
+    console.log('retrieving checkins for user_id:', this.props.reducer.userInfo.workId);
+    fetch(`http://${myIp}:3002/historycheckins/${this.props.reducer.userInfo.workId}`)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res["data"])
+        this.setState({ data: res["data"], showHistory: true })
+      })
+  }
 
 
   readUserData() {
@@ -89,15 +90,18 @@ alert('Change your info here (placeholder)')
                         }).catch(error => {
                           console.log(error)
                           this.setState({totalWeek: 0})})
-       
-        
-
     })
     
   }
 
+  showHistory = () => {
+    this.setState({ showHistory : !this.state.showHistory })
+  }
+
 
     render(){
+
+        console.log('workId: ', this.props.reducer.userInfo.workId)
 
         return (
           <React.Fragment>
@@ -105,7 +109,7 @@ alert('Change your info here (placeholder)')
           <Content padder>
             <Card>
               <CardItem header bordered>
-                <Text>{this.state.workId}</Text>
+                <Text>{`User Id: ${this.state.workId}`}</Text>
               </CardItem>
               <CardItem bordered>
                 <Body>
@@ -125,30 +129,47 @@ alert('Change your info here (placeholder)')
               </CardItem>
               
             </Card>
-
-            <Button style ={{margin:10, marginTop: 40}}
-                    full
-                    rounded
-                    primary
-                    onPress={this.showModal}>
-
-                        <Text style = {{color:'white'}}>Change Info</Text>
-                    </Button>
-
+              {
+               //<Button style ={{margin:10, marginTop: 40}}
+               //full
+               //rounded
+               //primary
+               //onPress={this.showModal}>
+               //    <Text style = {{color:'white'}}>Change Info</Text>
+               //</Button>
+              }
+           
+                    
                     <Button style ={{margin:10}}
-                    full
-                    rounded
-                    primary
-                    onPress={this.tempAlert2}>
-                             <Text style = {{color:'white'}}>Something</Text>
+                      full
+                      rounded
+                      primary
+                      onPress={this.getCheckinData}>
+                      <Text style = {{color:'white'}}>{this.state.showHistory ? 'Refresh Checkin History' : 'Show Checkin History'}</Text>
                     </Button>
+                    { this.state.showHistory ?
+                    <Button style ={{margin:10, marginTop: 5}}
+                      full
+                      rounded
+                      primary
+                      onPress={()=>Alert.alert('Data sharing may be added in the future')}>
+                      <Text style = {{color:'white'}}>Share my Data</Text>
+                    </Button> : <View></View>
+                    }
 
-                    {this.state.modalVisible && ( 
-                  <ChangeInfo 
-                    modalVisible = {this.state.modalVisible}
-                    showModal = {this.showModal}
-                    //forgotPassword={this.forgotPassword}
-                  />)}
+                    { this.state.showHistory ?
+                     
+                      this.state.data.map((item, index) => (
+                        <View key = {item.id} style = {styles.item}>
+                                <View>
+                                    <Text>{`Site: ${item.site_id}`}</Text>
+                                    <Text>{`Checkin Date: ${item.checkin_date_time.substring(0,10)} ${item.checkin_date_time.substring(11,16)} AM`}</Text>
+                                </View>
+                        </View>
+                      ))  : <View></View>
+                    }
+
+                   
           </Content>
         </React.Fragment>
           );
@@ -160,7 +181,17 @@ alert('Change your info here (placeholder)')
 }
 
 
-export default Profile
+const mapStateToProps = (state) => {
+    
+  const { reducer } = state
+  return { reducer }
+};
+
+
+
+export default connect(mapStateToProps
+  )(Profile);
+
 
 const styles = StyleSheet.create({
   container: {
@@ -170,4 +201,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     padding:40
   },
+  item: {
+    //flex: 1,
+    //flexDirection: 'row',
+    //justifyContent: 'space-between',
+    //alignItems: 'center',
+    padding: 15,
+    //margin: 2,
+    //borderColor: '#2a4944',
+    //borderRadius: 20,
+    //idth: Layout.window.width - 20,
+    //width:'100%',
+    alignSelf: 'stretch',
+    borderWidth: 1,
+    backgroundColor: '#a7a6ba'
+ }
 });

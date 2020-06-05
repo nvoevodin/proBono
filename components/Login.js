@@ -5,51 +5,65 @@ import * as firebase from 'firebase';
 import ForgotPassword from './subComponents/forgotPassword'
 
 
+import { connect } from 'react-redux';
+
 
 class Help extends Component {
 
 
     state = {
-        email:'',
-        password:'',
-        errorMessage: null,
-        modalVisible: false
+      firstName:'',
+      lastName:'',
+      workId:'',
+      email:null,
+      password:'',
+      errorMessage: null,
+      modalVisible: false,
+      data: null
     }
 
     showModal =() => {
       this.setState({ modalVisible : !this.state.modalVisible })
     }
   
-
-
     handleLogin = (email, password) => {
+      //if(firebase.auth().currentUser.emailVerified){
+      firebase.auth()
+      .signInWithEmailAndPassword(email, password)
+      .then(() => this.props.navigation.navigate('Home'))
+      .catch(error => this.setState({ errorMessage: error.message }))
+    
+      this.saveUserEmail(email);
+      this.saveUserData(email, '12345'); //for now hardcoded
+      //} else {
+      //this.setState({ errorMessage: 'Please, register or verify your account!' })
+      //}        
+    }
 
-  //if(firebase.auth().currentUser.emailVerified){
-    firebase.auth()
-    .signInWithEmailAndPassword(email, password)
-    .then(() => this.props.navigation.navigate('Home'))
-    .catch(error => this.setState({ errorMessage: error.message }))
+      //sends email to redux store
+      saveUserEmail = (email) => {
+        console.log('setting email as: ',email);
+        this.props.setEmailData(email);
+      }
 
-  //} else {
-    //this.setState({ errorMessage: 'Please, register or verify your account!' })
-  //} 
-
- 
-             
+      saveUserData = (email,workId) => {
+        let data = {
+                      'email': email,
+                      'workId': workId
+                    };
+        console.log('setting user data as ...', data);
+        this.props.setUserData(data);
       }
 
       goBack = () => {
-
         this.props.navigation.navigate('StartScreen')
-   
-              
-                
-         }
+      }
     
 
 
     render(){
 
+        
         return (
             <Container style = {styles.container}>
                 <Form>
@@ -119,8 +133,25 @@ class Help extends Component {
 
 }
 
+const mapStateToProps = (state) => {
+    
+  const { reducer } = state
+  return { reducer }
+};
 
-export default Help
+const mapDispachToProps = dispatch => {
+  return {
+    setEmailData: (y) => dispatch({ type: "SET_EMAIL_DATA", value: y}),
+    setUserData: (y) => dispatch({ type: "SET_USER_DATA", value: y})
+  };
+};
+
+
+export default connect(mapStateToProps,
+  mapDispachToProps
+  )(Help);
+
+
 
 const styles = StyleSheet.create({
   container: {

@@ -15,7 +15,8 @@ import background from '../assets/background.png'
 
 const moment = require('moment');
 import PageTemplate from './subComponents/Header'
-const myIp =  '192.168.2.7' //  
+const myIp =  '192.168.1.183' // '192.168.2.7' //  
+import { connect } from 'react-redux';
 
 class Home extends Component {
 
@@ -27,7 +28,7 @@ class Home extends Component {
     firstName:'',
     lastName:'',
     workId:'',
-    email: 'voevodin.nv@gmail.com',//'fauslyfox110@gmail.com', //for now swap email to see effect
+    //email: 'voevodin.nv@gmail.com',//'fauslyfox110@gmail.com', //for now swap email to see effect
     phone: '',
     submitted:false,
     preSubmitted:false,
@@ -69,11 +70,13 @@ class Home extends Component {
       }
 
     
-    this.getSiteData();
-   // this.readUserData();
+    this.getSiteData(this.props.reducer.email);
+    //this.readUserData();
     this.getLocationsPermissions();
 
   }
+
+    
 
     // handleAnimation = () => {
     //   console.log('starting to transform')
@@ -85,12 +88,12 @@ class Home extends Component {
     // }
 
     //get site data information //this will have to eventually run globally using redux
-    getSiteData = () => {
-      //console.log('retrieving site data with email:', this.state.email);
-      fetch(`http://${myIp}:3002/siteinfo/${this.state.email}`)
+    getSiteData = (email) => {
+      console.log('retrieving site data with email:', email);
+      fetch(`http://${myIp}:3002/siteinfo/${email}`)
         .then(res => res.json())
         .then(res => {
-        //console.log(res["data"][0])
+        console.log(res["data"][0])
         this.setState({ siteName: res["data"][0].site_name,
                         siteId : res["data"][0].site_id,
                         siteAdress : res["data"][0].site_address
@@ -103,15 +106,7 @@ class Home extends Component {
                                   longitude: res["data"][0].longitude       // update the value of specific key
                               }
                           }))
-        
-        
         })
-
-
-        
-
-        
-
     }
 
     //ask for location permissions 
@@ -129,27 +124,6 @@ class Home extends Component {
     }
 
 
-
-  getByProximity = () => {
-        console.log('starting geofence test...')
-        const maxDistanceInKM = 0.5; // 500m distance
-        // startPoint - center of perimeter
-        // points - array of points
-        // maxDistanceInKM - max point distance from startPoint in KM's
-        // result - array of points inside the max distance
-        let result = Geofence.filterByProximity(this.state.userLocation,
-                                                this.state.polygonPoints,
-                                                maxDistanceInKM);
-    
-        // You can access distance of this object in distanceInKM property
-        let distance = result[0].distanceInKM;
-        this.setState({ proximity : distance })
-        console.log(distance);
-
-    }
-
-
-
   logout = () =>{
     firebase.auth().signOut()
         .catch(error => console.log(error))
@@ -160,22 +134,25 @@ class Home extends Component {
 
 
 
-  // readUserData() {
-  //   firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
-  //   //console.log('user data:',snapshot.val());    
-  //   let data = snapshot.val()//[this.uid]
+//   readUserData = () => {
+//     firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
+//     console.log('user data:',snapshot.val());    
+//     let data = snapshot.val()//[this.uid]
+//
 
+ //        //console.log('our data: ',data);
+ //        this.setState({ firstName: data.firstName,
+ //                        lastName: data.lastName,
+ //                        workId: data.workId,
+ //                        email: data.email});  
 
-  //       //console.log('our data: ',data);
-  //       this.setState({ firstName: data.firstName,
-  //                       lastName: data.lastName,
-  //                       workId: data.workId});
-       
-        
+         //pull site data
+         //this.getSiteData(data.email);
 
-  //   })
+//     })
     
-  // }
+//   }
+
 
 
   getCurrentLoc  = async() => {
@@ -294,6 +271,8 @@ class Home extends Component {
 
 
     render(){
+      console.log('user email: ',this.props.reducer.email);
+      console.log('all user data: ', this.props.reducer.userInfo);
 
 
         return (
@@ -476,8 +455,17 @@ class Home extends Component {
 
 }
 
+const mapStateToProps = (state) => {
+    
+  const { reducer } = state
+  return { reducer }
+};
 
-export default Home
+
+
+export default connect(mapStateToProps
+  )(Home);
+
 
 const styles = StyleSheet.create({
   container: {

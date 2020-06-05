@@ -3,7 +3,7 @@ import { StyleSheet, Text, Alert} from 'react-native';
 import {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
 import * as firebase from 'firebase';
 
-const myIp =  '192.168.2.7' //'192.168.1.183' 
+const myIp =  '192.168.1.183'//'192.168.2.7' //'192.168.1.183' 
 
 
 class SignUp extends Component {
@@ -22,12 +22,13 @@ class SignUp extends Component {
 
 
          // when a user signs up they will have a record added to the user table in realtime database
-         addUser = (uid,workId,firstName,lastName) => {
+         addUser = (uid,workId,firstName,lastName, email) => {
             // console.log(uid)
             firebase.database().ref('UsersList/' + uid + '/info/').set({
                 workId,
                 firstName,
-                lastName
+                lastName,
+                email
           }).then((data)=>{
               //success callback
              //console.log('data ' , data)
@@ -59,7 +60,8 @@ class SignUp extends Component {
                 this.addUser(firebase.auth().currentUser.uid,
                                 this.state.workId, 
                              this.state.firstName, 
-                             this.state.lastName, 
+                             this.state.lastName,
+                             this.state.email 
                              );
                             
               })
