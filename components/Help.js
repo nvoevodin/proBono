@@ -78,7 +78,7 @@ class Help extends Component {
                 {
                 this.state.menu.map((item, index) => (
                   <Accordian 
-                    key = {item.id} 
+                    key = {index} 
                     title={item.title}
                     data={item.data}
                   />
