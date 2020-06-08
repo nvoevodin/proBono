@@ -65,8 +65,8 @@ class Home extends Component {
       let data = snapshot.val()//[this.uid]
       //console.log('our data: ',data);
         this.props.setUserData({
-          'email': firebase.auth().currentUser.email,
-          'workId': data.workId
+          email: firebase.auth().currentUser.email,
+          workId: data.workId
         });
       })
   }
