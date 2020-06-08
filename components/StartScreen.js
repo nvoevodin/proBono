@@ -19,9 +19,10 @@ class Help extends Component {
       firebase.auth().onAuthStateChanged(user => {
        //console.log(user)
         // user ? this.registerForPushNotificationsAsync(user) : '',
-        // console.log(firebase.auth().currentUser.email)
+        // 
         if (user) {
           this.props.navigation.navigate(user.emailVerified == true ? 'Home' : 'StartScreen' )
+          console.log(firebase.auth().currentUser.email)
         } 
         
         // Expo.Notifications.addListener(this.listen)

@@ -8,6 +8,7 @@ import Layout from '../constants/Layout';
 const myIp =  '192.168.1.183' //'192.168.2.7' //'192.168.1.183' 
 
 import { connect } from 'react-redux';
+import changeInfo from './subComponents/changeInformationModal';
 
 class Profile extends Component {
 
@@ -54,7 +55,7 @@ alert('Change your info here (placeholder)')
 
   getCheckinData =() => {
     console.log('retrieving checkins for user_id:', this.props.reducer.userInfo.workId);
-    fetch(`http://${myIp}:3002/historycheckins/${this.props.reducer.userInfo.workId}`)
+    fetch(`https://geohut.metis-data.site/historycheckins/${this.props.reducer.userInfo.workId}`)
       .then(res => res.json())
       .then(res => {
         console.log(res["data"])
@@ -73,7 +74,7 @@ alert('Change your info here (placeholder)')
                         lastName: data.lastName,
                         workId: data.workId});
 
-                        fetch(`http://${myIp}:3002/checkins/${data.workId}`)
+                        fetch(`https://geohut.metis-data.site/checkins/${data.workId}`)
                         .then(res => res.json())
                         .then(res => {
                     console.log(res.data[0]['total'])
@@ -81,7 +82,7 @@ alert('Change your info here (placeholder)')
                     
                         }).catch(error => this.setState({totalWeek: 0}))
 
-                        fetch(`http://${myIp}:3002/checkinsWeek/${data.workId}`)
+                        fetch(`https://geohut.metis-data.site/checkinsWeek/${data.workId}`)
                         .then(res => res.json())
                         .then(res => {
                     console.log(res)
@@ -129,15 +130,15 @@ alert('Change your info here (placeholder)')
               </CardItem>
               
             </Card>
-              {
-               //<Button style ={{margin:10, marginTop: 40}}
-               //full
-               //rounded
-               //primary
-               //onPress={this.showModal}>
-               //    <Text style = {{color:'white'}}>Change Info</Text>
-               //</Button>
-              }
+              
+               <Button style ={{margin:10, marginTop: 40}}
+               full
+               rounded
+               primary
+               onPress={this.showModal}>
+                   <Text style = {{color:'white'}}>Change Info</Text>
+               </Button>
+              
            
                     
                     <Button style ={{margin:10}}
@@ -160,7 +161,7 @@ alert('Change your info here (placeholder)')
                     { this.state.showHistory ?
                      
                       this.state.data.map((item, index) => (
-                        <View key = {item.id} style = {styles.item}>
+                        <View key = {index} style = {styles.item}>
                                 <View>
                                     <Text>{`Site: ${item.site_id}`}</Text>
                                     <Text>{`Checkin Date: ${item.checkin_date_time.substring(0,10)} ${item.checkin_date_time.substring(11,16)} AM`}</Text>
@@ -171,6 +172,11 @@ alert('Change your info here (placeholder)')
 
                    
           </Content>
+       <ChangeInfo 
+       modalVisible = {this.state.modalVisible}
+       showModal = {this.showModal}
+       
+       />
         </React.Fragment>
           );
 

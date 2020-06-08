@@ -43,7 +43,7 @@ class SignUp extends Component {
     handleSignUp = (email, password) => {
      
 
-      fetch(`http://${myIp}:3002/validate/${email}`)
+      fetch(`https://geohut.metis-data.site/validate/${email}`)
         .then(res => res.json())
         .then(res => {
  

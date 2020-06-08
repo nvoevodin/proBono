@@ -5,7 +5,7 @@ import * as firebase from 'firebase';
 import ForgotPassword from './subComponents/forgotPassword'
 
 
-import { connect } from 'react-redux';
+
 
 
 class Help extends Component {
@@ -33,27 +33,27 @@ class Help extends Component {
       .then(() => this.props.navigation.navigate('Home'))
       .catch(error => this.setState({ errorMessage: error.message }))
     
-      this.saveUserEmail(email);
-      this.saveUserData(email, '12345'); //for now hardcoded
+      // this.saveUserEmail(email);
+      // this.saveUserData(email, '12345'); //for now hardcoded
       //} else {
       //this.setState({ errorMessage: 'Please, register or verify your account!' })
       //}        
     }
 
-      //sends email to redux store
-      saveUserEmail = (email) => {
-        console.log('setting email as: ',email);
-        this.props.setEmailData(email);
-      }
+      // //sends email to redux store
+      // saveUserEmail = (email) => {
+      //   console.log('setting email as: ',email);
+      //   this.props.setEmailData(email);
+      // }
 
-      saveUserData = (email,workId) => {
-        let data = {
-                      'email': email,
-                      'workId': workId
-                    };
-        console.log('setting user data as ...', data);
-        this.props.setUserData(data);
-      }
+      // saveUserData = (email,workId) => {
+      //   let data = {
+      //                 'email': email,
+      //                 'workId': workId
+      //               };
+      //   console.log('setting user data as ...', data);
+      //   this.props.setUserData(data);
+      // }
 
       goBack = () => {
         this.props.navigation.navigate('StartScreen')
@@ -133,23 +133,10 @@ class Help extends Component {
 
 }
 
-const mapStateToProps = (state) => {
-    
-  const { reducer } = state
-  return { reducer }
-};
-
-const mapDispachToProps = dispatch => {
-  return {
-    setEmailData: (y) => dispatch({ type: "SET_EMAIL_DATA", value: y}),
-    setUserData: (y) => dispatch({ type: "SET_USER_DATA", value: y})
-  };
-};
 
 
-export default connect(mapStateToProps,
-  mapDispachToProps
-  )(Help);
+
+export default Help;
 
 
 
