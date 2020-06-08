@@ -50,8 +50,8 @@ class Help extends Component {
         return (
             <Container >
                 <Animatable.View animation="bounceInDown" style = {styles.container1}>
-
-              <Entypo  name="location-pin" size={230} color="#eb6e3d" />
+<Image source={require('../assets/splash.png')} style = {{width: 160, height: 270}}/> 
+              {/* <Entypo  name="location-pin" size={230} color="#eb6e3d" /> */}
               <Text style = {{fontSize:50, fontWeight:'bold'}}>GeoHut</Text>
                 {/* <Animatable.Image animation="bounceInDown"
                 style = {styles.tinyLogo}
