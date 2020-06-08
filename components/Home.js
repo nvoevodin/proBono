@@ -5,63 +5,39 @@ import {
   View,
   TouchableOpacity,
   Alert,
-  ImageBackground,
   Animated,
   ActivityIndicator,
 } from "react-native";
 import { Button } from "native-base";
 import * as firebase from "firebase";
-import { Ionicons } from "@expo/vector-icons";
 import { Entypo } from "@expo/vector-icons";
-import Geofence from "react-native-expo-geofence";
 import * as Permissions from "expo-permissions";
 import * as Location from "expo-location";
 import { getDistance } from "geolib";
-import Layout from "../constants/Layout";
 import * as Animatable from "react-native-animatable";
-
 import background from "../assets/background.png";
+import PageTemplate from "./subComponents/Header";
+import { connect } from "react-redux";
 
 const moment = require("moment");
-import PageTemplate from "./subComponents/Header";
-const myIp = "192.168.1.183"; // '192.168.2.7' //
-import { connect } from "react-redux";
 
 class Home extends Component {
   uid = firebase.auth().currentUser.uid;
 
   state = {
-    firstName: "",
-    lastName: "",
-    workId: "",
-    //email: 'voevodin.nv@gmail.com',//'fauslyfox110@gmail.com', //for now swap email to see effect
-    phone: "",
+    workId: null,
     submitted: false,
     preSubmitted: false,
-    polygonPoints: [
-      { latitude: 40.7557, longitude: -73.9457 },
-      //latitude: -23.658739, longitude: -46.666305 }//,
-      //{ latitude: -23.651814, longitude:  -46.664129 }
-    ],
-    userLocation: {
-      latitude: 40.7557,
-      longitude: -73.9457,
-      //latitude: -23.652508,
-      //longitude: -46.661474
-    },
     proximity: null,
     hasLocationPermission: null,
     proximityMax: 200,
-    siteId: 1000,
-    siteName: null,
-    siteAdress: null,
-    siteLocation: { latitude: 40.7635514, longitude: -73.9289525 },
+    siteLocation: { latitude: null, longitude: null },
     submittedAnimation: false,
     animatedValue: new Animated.Value(70),
   };
 
   componentDidMount() {
-  
+    //CHECK IS USER IS VERIFIED
     if (firebase.auth().currentUser.emailVerified == false) {
       Alert.alert(
         "ALERT!",
@@ -72,35 +48,73 @@ class Home extends Component {
       this.logout();
     }
 
-    //this adds email and workid to redux
-    this.props.setEmailData(firebase.auth().currentUser.email);
-    this.props.setUserData({
-      'email': firebase.auth().currentUser.email,
-      'workId': '12345'
-    });
+    //READS FROM FIREBASE AND SETS EMAIL AND WORKID IN REDUX
+    this.readFireBase();
 
+    //RETRIEVES SITE INFORMATION (using either email/phone or id)
+    this.getSiteDataWithEmail(firebase.auth().currentUser.email);
     
-    this.getSiteData(firebase.auth().currentUser.email);
-    //this.readUserData();
+    //EXECUTES LOCATION PERMISSIONS
     this.getLocationsPermissions();
   }
 
-  // handleAnimation = () => {
-  //   console.log('starting to transform')
-  //   Animated.timing(this.state.animatedValue, {
-  //     toValue: 1,
-  //     duration: 1000,
-  //     easing: Easing.ease
-  //   }).start()
-  // }
+  //FUNCTION: READS FIREBASE AND SETS DATA INTO REDUX
+  readFireBase = () => {
+    firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
+      console.log('user data:',snapshot.val());    
+      let data = snapshot.val()//[this.uid]
+      //console.log('our data: ',data);
+        this.props.setUserData({
+          'email': firebase.auth().currentUser.email,
+          'workId': data.workId
+        });
+      })
+  }
 
-  //get site data information //this will have to eventually run globally using redux
-  getSiteData = (email) => {
-    console.log("retrieving site data with email:", email);
+  //***THE TWO FUNCTIONS BELOW ARE OPTIONS FOR US IF WE END UP USING EMAIL/PHONE OR ID */
+
+  //FUNCTION: RETRIEVES SITE DATA FOR THAT USER USING THE EMAIL 
+  getSiteDataWithEmail = (email) => {
+    //console.log("retrieving site data with email:", email);
     fetch(`https://geohut.metis-data.site/siteinfo/${email}`)
       .then((res) => res.json())
       .then((res) => {
-        console.log(res["data"][0]);
+        
+        //set state
+        this.setState({
+          siteName: res["data"][0].site_name,
+          siteId: res["data"][0].site_id,
+          siteAdress: res["data"][0].site_address,
+        });
+
+        //set lat long in user location
+        this.setState((prevState) => ({
+          siteLocation: {
+            // object that we want to update
+            ...prevState.siteLocation, // keep all other key-value pairs
+            latitude: res["data"][0].latitude,
+            longitude: res["data"][0].longitude, // update the value of specific key
+          },
+        }));
+
+        //set data into reducer
+        this.props.setSiteData({
+          siteName: res["data"][0].site_name,
+          siteId: res["data"][0].site_id,
+          siteAdress: res["data"][0].site_address,
+          latitude: res["data"][0].latitude,
+          longitude: res["data"][0].longitude
+        });
+
+      });
+  };
+
+  //FUNCTION: RETRIEVES SITE DATA FOR THAT USER USING USER_ID 
+  getSiteDataWithId = (id) => {
+    fetch(`https://geohut.metis-data.site/usersiteinfo/${id}`)
+      .then((res) => res.json())
+      .then((res) => {
+        console.log('user site data: ',res["data"][0]);
         this.setState({
           siteName: res["data"][0].site_name,
           siteId: res["data"][0].site_id,
@@ -115,10 +129,19 @@ class Home extends Component {
             longitude: res["data"][0].longitude, // update the value of specific key
           },
         }));
+
+        //set data into reducer
+        this.props.setSiteData({
+          siteName: res["data"][0].site_name,
+          siteId: res["data"][0].site_id,
+          siteAdress: res["data"][0].site_address,
+          latitude: res["data"][0].latitude,
+          longitude: res["data"][0].longitude
+        });
       });
   };
 
-  //ask for location permissions
+  //FUNCTION: ASKS FOR LOCATION PERMISSIONS
   getLocationsPermissions = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     //status && console.log('location: ', status)
@@ -131,6 +154,7 @@ class Home extends Component {
     }
   };
 
+  //FUNCTION: LOGS OUT
   logout = () => {
     firebase
       .auth()
@@ -140,25 +164,7 @@ class Home extends Component {
     this.props.navigation.navigate("StartScreen");
   };
 
-  //   readUserData = () => {
-  //     firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
-  //     console.log('user data:',snapshot.val());
-  //     let data = snapshot.val()//[this.uid]
-  //
-
-  //        //console.log('our data: ',data);
-  //        this.setState({ firstName: data.firstName,
-  //                        lastName: data.lastName,
-  //                        workId: data.workId,
-  //                        email: data.email});
-
-  //pull site data
-  //this.getSiteData(data.email);
-
-  //     })
-
-  //   }
-
+  //FUNCTION: GETS USER'S CURRENT LOCATION
   getCurrentLoc = async () => {
     try {
       let location = await Location.getCurrentPositionAsync({});
@@ -171,6 +177,7 @@ class Home extends Component {
     }
   };
 
+  //FUNCTION: HANDLES PRECHECKIN
   preCheckin = async () => {
     if (this.state.preSubmitted === false) {
       this.setState({ submittedAnimation: true });
@@ -205,8 +212,8 @@ class Home extends Component {
               .substr(0, 18) + "0"
           }&site_id=${"B10002"}&first_name=${this.state.firstName}
               &last_name=${this.state.lastName}&user_id=${this.state.workId}
-              &latitude=${this.state.userLocation.latitude}
-              &longitude=${this.state.userLocation.longitude}
+              &latitude=${parseFloat(location[0].coords.latitude)}
+              &longitude=${parseFloat(location[0].coords.longitude)}
               &checkin_type=1
               &distance=${distance}`,
           { method: "POST" }
@@ -224,6 +231,7 @@ class Home extends Component {
     }
   };
 
+  //FUNCTION: HANDLES MAIN CHECKIN
   handleButton = async () => {
     if (this.state.submitted === false) {
       this.setState({ submittedAnimation: true });
@@ -260,8 +268,8 @@ class Home extends Component {
                 .substr(0, 18) + "0"
             }&site_id=${"B10002"}&first_name=${this.state.firstName}
             &last_name=${this.state.lastName}&user_id=${this.state.workId}
-            &latitude=${this.state.userLocation.latitude}
-            &longitude=${this.state.userLocation.longitude}
+            &latitude=${parseFloat(location[0].coords.latitude)}
+            &longitude=${parseFloat(location[0].coords.longitude)}
             &checkin_type=0
             &distance=${distance}`,
             { method: "POST" }
@@ -304,14 +312,6 @@ class Home extends Component {
             </Text>
           </View>
 
-          {/* <View style={styles.bubble1}>
-              <Text style={styles.titleText}>
-                Address: {this.state.siteName ? `${this.state.siteAdress}` : `Retrieving ... `}
-              </Text>
-  
-
-            </View> */}
-
           <View style={styles.container}>
             <TouchableOpacity
               //disabled={this.state.submitted}
@@ -348,12 +348,6 @@ class Home extends Component {
                   source={background}
                   resizeMode="cover"
                   style={{
-                    //marginTop:100,
-                    //position: 'absolute',
-                    //left: 40,
-                    //top: 100,
-                    //height: 100,
-                    //width: 100,
                     zIndex: 0,
                     justifyContent: "center",
                     width: 80,
@@ -394,12 +388,6 @@ class Home extends Component {
                   source={background}
                   resizeMode="cover"
                   style={{
-                    //marginTop:100,
-                    //position: 'absolute',
-                    //left: 40,
-                    //top: 100,
-                    //height: 100,
-                    //width: 100,
                     zIndex: 0,
                     justifyContent: "center",
                     width: 80,
@@ -482,7 +470,8 @@ const mapStateToProps = (state) => {
 const mapDispachToProps = dispatch => {
   return {
     setEmailData: (y) => dispatch({ type: "SET_EMAIL_DATA", value: y}),
-    setUserData: (y) => dispatch({ type: "SET_USER_DATA", value: y})
+    setUserData: (y) => dispatch({ type: "SET_USER_DATA", value: y}),
+    setSiteData: (y) => dispatch({ type: "SET_SITE_DATA", value: y})
   };
 };
 

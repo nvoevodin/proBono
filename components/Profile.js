@@ -51,6 +51,7 @@ alert('Change your info here (placeholder)')
 
   componentDidMount() {
     this.readUserData()
+    
   }
 
   getCheckinData =() => {
@@ -69,20 +70,20 @@ alert('Change your info here (placeholder)')
     console.log('user data:',snapshot.val());    
     let data = snapshot.val()//[this.uid]
 
-        //console.log('our data: ',data);
+        console.log('our data: ',data);
         this.setState({ firstName: data.firstName,
                         lastName: data.lastName,
                         workId: data.workId});
 
-                        fetch(`https://geohut.metis-data.site/checkins/${data.workId}`)
+                        fetch(`https://geohut.metis-data.site/checkins/${this.props.reducer.userInfo.workId}`)
                         .then(res => res.json())
                         .then(res => {
-                    console.log(res.data[0]['total'])
+                    console.log('first pull:',res.data)
                     this.setState({total:res.data[0]['total']})
                     
                         }).catch(error => this.setState({totalWeek: 0}))
 
-                        fetch(`https://geohut.metis-data.site/checkinsWeek/${data.workId}`)
+                        fetch(`https://geohut.metis-data.site/checkinsWeek/${this.props.reducer.userInfo.workId}`)
                         .then(res => res.json())
                         .then(res => {
                     console.log(res)
@@ -103,6 +104,7 @@ alert('Change your info here (placeholder)')
     render(){
 
         console.log('workId: ', this.props.reducer.userInfo.workId)
+        console.log('site data: ', this.props.reducer.siteData);
 
         return (
           <React.Fragment>
