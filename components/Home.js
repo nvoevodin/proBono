@@ -61,9 +61,9 @@ class Home extends Component {
   //FUNCTION: READS FIREBASE AND SETS DATA INTO REDUX
   readFireBase = () => {
     firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
-      console.log('user data:',snapshot.val());    
-      let data = snapshot.val()//[this.uid]
-      //console.log('our data: ',data);
+        
+      let data = snapshot.val()
+     
         this.props.setUserData({
           email: firebase.auth().currentUser.email,
           workId: data.workId

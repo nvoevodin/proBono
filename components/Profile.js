@@ -1,24 +1,15 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View, FlatList, List, Alert } from 'react-native';
-import { Container, Button, Content, Card, CardItem, Body } from "native-base";
+import { StyleSheet, Text, View, Alert } from 'react-native';
+import { Button, Content, Card, CardItem, Body } from "native-base";
 import * as firebase from 'firebase';
 import PageTemplate from './subComponents/Header'
 import ChangeInfo from './subComponents/changeInformationModal'
-import Layout from '../constants/Layout';
-const myIp =  '192.168.1.183' //'192.168.2.7' //'192.168.1.183' 
+//import Layout from '../constants/Layout';
+ 
 
 import { connect } from 'react-redux';
-import changeInfo from './subComponents/changeInformationModal';
 
 class Profile extends Component {
-
-
-  tempAlert1 = () =>{
-alert('Change your info here (placeholder)')
-  }
-  tempAlert2 = () =>{
-    alert('(placeholder)')
-      }
 
 
   logout = () =>{
@@ -43,7 +34,7 @@ alert('Change your info here (placeholder)')
 
 
 
-
+//CHANGE INFO MODAL TOGGLE
   showModal =() => {
     this.setState({ modalVisible : !this.state.modalVisible })
   }
@@ -55,22 +46,24 @@ alert('Change your info here (placeholder)')
   }
 
   getCheckinData =() => {
-    console.log('retrieving checkins for user_id:', this.props.reducer.userInfo.workId);
+  
     fetch(`https://geohut.metis-data.site/historycheckins/${this.props.reducer.userInfo.workId}`)
       .then(res => res.json())
       .then(res => {
-        console.log(res["data"])
+       
         this.setState({ data: res["data"], showHistory: true })
       })
   }
 
 
   readUserData() {
-    firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
-    console.log('user data:',snapshot.val());    
-    let data = snapshot.val()//[this.uid]
 
-        console.log('our data: ',data);
+  
+    firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
+     
+    let data = snapshot.val()
+
+       
         this.setState({ firstName: data.firstName,
                         lastName: data.lastName,
                         workId: data.workId});
@@ -78,7 +71,7 @@ alert('Change your info here (placeholder)')
                         fetch(`https://geohut.metis-data.site/checkins/${this.props.reducer.userInfo.workId}`)
                         .then(res => res.json())
                         .then(res => {
-                    console.log('first pull:',res.data)
+                
                     this.setState({total:res.data[0]['total']})
                     
                         }).catch(error => this.setState({totalWeek: 0}))
@@ -86,11 +79,11 @@ alert('Change your info here (placeholder)')
                         fetch(`https://geohut.metis-data.site/checkinsWeek/${this.props.reducer.userInfo.workId}`)
                         .then(res => res.json())
                         .then(res => {
-                    console.log(res)
+                   
                     this.setState({totalWeek:res.data[0]['count_ins']})
                     
                         }).catch(error => {
-                          console.log(error)
+                         
                           this.setState({totalWeek: 0})})
     })
     
@@ -103,8 +96,6 @@ alert('Change your info here (placeholder)')
 
     render(){
 
-        console.log('workId: ', this.props.reducer.userInfo.workId)
-        console.log('site data: ', this.props.reducer.siteData);
 
         return (
           <React.Fragment>

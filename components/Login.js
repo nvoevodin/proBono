@@ -19,10 +19,12 @@ class Help extends Component {
       data: null
     }
 
+    //FORGET PASSWORD MODAL TOGGLE
     showModal =() => {
       this.setState({ modalVisible : !this.state.modalVisible })
     }
   
+    //LOGS U IN, DISPLAYS ERROR MESSAGE IF ANY
     handleLogin = (email, password) => {
       firebase.auth()
       .signInWithEmailAndPassword(email, password)
