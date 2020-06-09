@@ -1,11 +1,8 @@
 import React, {Component} from 'react';
-import { StyleSheet, Text, View , Alert} from 'react-native';
-import {Container, Content, Header, Form, Input, Item, Button, Label} from 'native-base';
+import { StyleSheet, Text} from 'react-native';
+import {Container, Form, Input, Item, Button, Label} from 'native-base';
 import * as firebase from 'firebase';
 import ForgotPassword from './subComponents/forgotPassword'
-
-
-
 
 
 class Help extends Component {
@@ -27,33 +24,13 @@ class Help extends Component {
     }
   
     handleLogin = (email, password) => {
-      //if(firebase.auth().currentUser.emailVerified){
       firebase.auth()
       .signInWithEmailAndPassword(email, password)
       .then(() => this.props.navigation.navigate('Home'))
       .catch(error => this.setState({ errorMessage: error.message }))
-    
-      // this.saveUserEmail(email);
-      // this.saveUserData(email, '12345'); //for now hardcoded
-      //} else {
-      //this.setState({ errorMessage: 'Please, register or verify your account!' })
-      //}        
+           
     }
 
-      // //sends email to redux store
-      // saveUserEmail = (email) => {
-      //   console.log('setting email as: ',email);
-      //   this.props.setEmailData(email);
-      // }
-
-      // saveUserData = (email,workId) => {
-      //   let data = {
-      //                 'email': email,
-      //                 'workId': workId
-      //               };
-      //   console.log('setting user data as ...', data);
-      //   this.props.setUserData(data);
-      // }
 
       goBack = () => {
         this.props.navigation.navigate('StartScreen')
@@ -119,7 +96,7 @@ class Help extends Component {
                   <ForgotPassword 
                     modalVisible = {this.state.modalVisible}
                     showModal = {this.showModal}
-                    //forgotPassword={this.forgotPassword}
+         
                   />)}
 
 
@@ -132,8 +109,6 @@ class Help extends Component {
 
 
 }
-
-
 
 
 export default Help;
