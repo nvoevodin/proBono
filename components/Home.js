@@ -25,7 +25,6 @@ class Home extends Component {
   uid = firebase.auth().currentUser.uid;
 
   state = {
-    workId: null,
     submitted: false,
     preSubmitted: false,
     proximity: null,
@@ -63,8 +62,10 @@ class Home extends Component {
     firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
         
       let data = snapshot.val()
-     
+        //console.log('user data: ',data)
         this.props.setUserData({
+          firstName: data.firstName,
+          lastName: data.lastName,
           email: firebase.auth().currentUser.email,
           workId: data.workId
         });
@@ -177,6 +178,26 @@ class Home extends Component {
     }
   };
 
+  //FUNCTION: CALCULATES DISTANCE INCLUDES TRY CATCH FOR ERRORS
+  calculateDistance = async (start_x,start_y, end_x,end_y) => {
+    try {
+      let distance = await getDistance(
+        {
+          latitude: start_x,
+          longitude: start_y,
+        },
+        {
+          latitude: end_x,
+          longitude: end_y,
+        },
+        (accuracy = 1)
+      );
+      return distance
+    } catch (error) {
+      alert.Alert('Something went wrong, please logout, log back in and try again')
+    }
+  }
+
   //FUNCTION: HANDLES PRECHECKIN
   preCheckin = async () => {
     if (this.state.preSubmitted === false) {
@@ -189,19 +210,15 @@ class Home extends Component {
         console.log(parseFloat(location[0].coords.longitude));
 
         //test how far away the user is
-        let distance = await getDistance(
-          {
-            latitude: parseFloat(location[0].coords.latitude),
-            longitude: parseFloat(location[0].coords.longitude),
-          },
-          {
-            latitude: this.state.siteLocation.latitude,
-            longitude: this.state.siteLocation.longitude,
-          },
-          (accuracy = 1)
+        let distance = await this.calculateDistance(
+          parseFloat(location[0].coords.latitude),
+          parseFloat(location[0].coords.longitude),
+          this.state.siteLocation.latitude,
+          this.state.siteLocation.longitude
         );
+        
         console.log("distance: ", distance);
-
+        console.log("worker id: ", this.props.reducer.userInfo.workId)
         //send data
         fetch(
           // MUST USE YOUR LOCALHOST ACTUAL IP!!! NOT http://localhost...
@@ -210,8 +227,8 @@ class Home extends Component {
               .utcOffset("-0500")
               .format("YYYY-MM-DD HH:mm:ss")
               .substr(0, 18) + "0"
-          }&site_id=${"B10002"}&first_name=${this.state.firstName}
-              &last_name=${this.state.lastName}&user_id=${this.state.workId}
+          }&site_id=${this.props.reducer.siteData.siteId}&first_name=${this.props.reducer.userInfo.firstName}
+              &last_name=${this.props.reducer.userInfo.lastName}&user_id=${this.props.reducer.userInfo.workId}
               &latitude=${parseFloat(location[0].coords.latitude)}
               &longitude=${parseFloat(location[0].coords.longitude)}
               &checkin_type=1
@@ -231,6 +248,7 @@ class Home extends Component {
     }
   };
 
+
   //FUNCTION: HANDLES MAIN CHECKIN
   handleButton = async () => {
     if (this.state.submitted === false) {
@@ -242,16 +260,11 @@ class Home extends Component {
         console.log(parseFloat(location[0].coords.longitude));
 
         //test how far away the user is
-        let distance = await getDistance(
-          {
-            latitude: parseFloat(location[0].coords.latitude),
-            longitude: parseFloat(location[0].coords.longitude),
-          },
-          {
-            latitude: this.state.siteLocation.latitude,
-            longitude: this.state.siteLocation.longitude,
-          },
-          (accuracy = 1)
+        let distance = await this.calculateDistance(
+          parseFloat(location[0].coords.latitude),
+          parseFloat(location[0].coords.longitude),
+          this.state.siteLocation.latitude,
+          this.state.siteLocation.longitude
         );
         console.log("distance: ", distance);
 
@@ -266,8 +279,8 @@ class Home extends Component {
                 .utcOffset("-0500")
                 .format("YYYY-MM-DD HH:mm:ss")
                 .substr(0, 18) + "0"
-            }&site_id=${"B10002"}&first_name=${this.state.firstName}
-            &last_name=${this.state.lastName}&user_id=${this.state.workId}
+            }&site_id=${this.props.reducer.siteData.siteId}&first_name=${this.props.reducer.userInfo.firstName}
+            &last_name=${this.props.reducer.userInfo.lastName}&user_id=${this.props.reducer.userInfo.workId}
             &latitude=${parseFloat(location[0].coords.latitude)}
             &longitude=${parseFloat(location[0].coords.longitude)}
             &checkin_type=0
