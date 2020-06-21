@@ -55,7 +55,58 @@ class Home extends Component {
     
     //EXECUTES LOCATION PERMISSIONS
     this.getLocationsPermissions();
+
+
+    //CHECKS IF ALREADY PRECHECKED IN
+    this.precheckedIn();
+
+    //CHECKS IF ALREADY CHECKED IN
+    this.checkedIn();
+
+
+
   }
+
+
+//FUNCTION: CHECKS IF ALREADY CHECKED IN TODAY (IN CASE LOGGED OUT)
+
+precheckedIn = () =>{
+
+  firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
+        
+    let data = snapshot.val()
+
+    fetch(`https://geohut.metis-data.site/precheckcheck/${data.workId}`)
+    .then(res => res.json())
+    .then(res => {  
+     
+      if (res["data"].some(e => e.checkin_date_time.substr(0,10) === moment().utcOffset("-0500").format("YYYY-MM-DD"))){
+        this.setState({preSubmitted: true})
+      }
+    })
+    })
+
+}
+
+
+checkedIn = () =>{
+
+  firebase.database().ref('UsersList/'+ this.uid + '/info').once('value', snapshot => {
+        
+    let data = snapshot.val()
+
+    fetch(`https://geohut.metis-data.site/checkincheck/${data.workId}`)
+    .then(res => res.json())
+    .then(res => {  
+     
+      if (res["data"].some(e => e.checkin_date_time.substr(0,10) === moment().utcOffset("-0500").format("YYYY-MM-DD"))){
+        this.setState({submitted: true})
+      }
+    })
+    })
+
+}
+
 
   //FUNCTION: READS FIREBASE AND SETS DATA INTO REDUX
   readFireBase = () => {
@@ -190,7 +241,7 @@ class Home extends Component {
           latitude: end_x,
           longitude: end_y,
         },
-        (accuracy = 1)
+        (accuracy = 10)
       );
       return distance
     } catch (error) {

@@ -71,19 +71,24 @@ class Profile extends Component {
                         fetch(`https://geohut.metis-data.site/checkins/${this.props.reducer.userInfo.workId}`)
                         .then(res => res.json())
                         .then(res => {
+                          console.log(res.data)
                 
                     this.setState({total:res.data[0]['total']})
                     
                         }).catch(error => this.setState({totalWeek: 0}))
+                      
+                        
+
 
                         fetch(`https://geohut.metis-data.site/checkinsWeek/${this.props.reducer.userInfo.workId}`)
                         .then(res => res.json())
                         .then(res => {
-                   
+                          console.log(res.data)
                     this.setState({totalWeek:res.data[0]['count_ins']})
                     
                         }).catch(error => {
                          
+                          
                           this.setState({totalWeek: 0})})
     })
     

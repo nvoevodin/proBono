@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "proBono",
-    "slug": "proBono",
+    "name": "GeoHut",
+    "slug": "geohut_beta",
     "platforms": [
       "ios",
       "android",
@@ -23,6 +23,7 @@
     ],
     "ios": {
       "supportsTablet": true
-    }
+    },
+    "description": ""
   }
 }
