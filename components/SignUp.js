@@ -100,6 +100,7 @@ class SignUp extends Component {
             <Input
               autoCorrect={false}
               onChangeText={(firstName) => this.setState({ firstName })}
+              
             />
           </Item>
 
@@ -109,6 +110,7 @@ class SignUp extends Component {
               secureTextEntry={false}
               autoCorrect={false}
               onChangeText={(lastName) => this.setState({ lastName })}
+              
             />
           </Item>
           <Item floatingLabel>
@@ -118,6 +120,7 @@ class SignUp extends Component {
               autoCorrect={false}
               autoCapitalize="none"
               onChangeText={(workId) => this.setState({ workId })}
+              
             />
           </Item>
 
@@ -127,6 +130,7 @@ class SignUp extends Component {
               autoCorrect={false}
               autoCapitalize="none"
               onChangeText={(email) => this.setState({ email })}
+              
             />
           </Item>
 
@@ -137,14 +141,20 @@ class SignUp extends Component {
               autoCorrect={false}
               autoCapitalize="none"
               onChangeText={(password) => this.setState({ password })}
+              
             />
           </Item>
+
+          {(!this.state.password || !this.state.email || !this.state.firstName || !this.state.lastName || !this.state.workId) && 
+          <Text style = {{color:'red', width: '50%', marginLeft: '30%', marginTop: '5%'}}>All Fields Are Required!</Text>
+          } 
 
           <Button
             style={{ margin: 10, marginTop: 40 }}
             full
             rounded
             success
+            disabled = {!this.state.password || !this.state.email || !this.state.firstName || !this.state.lastName || !this.state.workId}
             onPress={() =>
               this.handleSignUp(this.state.email, this.state.password)
             }
