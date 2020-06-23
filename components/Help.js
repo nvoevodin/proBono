@@ -24,24 +24,20 @@ class Help extends Component {
     this.state = {
       menu :[
         { 
-          title: "I can't make it to work, what should I do?", 
-          data: 'You can document your excuse with your caseworker and do a pre-check-in at the homepage.',
+          title: "I am unable to get to my site, what should I do?", 
+          data: 'You can document your excuse with your business services manager. Make sure to pre-checkin on the homepage so that REBNY staff know where you are.',
         },
         { 
           title: 'My site manager says I am not on the list for work, what should I do?',
-          data: 'Please contact your casemanager at REBNY immediately for assistance with this issue.'
+          data: 'Please contact your business services manager at REBNY immediately for assistance with this issue.'
         },
         { 
-         title: 'I am not receiving payment despite showing up to work. What should I do?',
-         data: 'A drink (or beverage) is a liquid intended for human consumption.'
+         title: 'The app is not allowing me to pre-checkin and/or check in.',
+         data: 'Please contact your business services manager to let them know you attempted to check in and send us an email at the address under "contact us".'
         },
         { 
-          title: 'I have another question?',
-          data: 'Here is your answer.'
-        },
-        { 
-          title: 'I have another question?',
-          data: 'Here is your answer.'
+         title: 'The app says I am not close enough to check in but I am, what do I do?',
+         data: 'Please contact your business services manager to let them know you attempted to check in and send us an email at the address under "contact us".'
         }
       ]
      }
@@ -61,9 +57,12 @@ class Help extends Component {
 
         return (
           
-          <React.Fragment>
+          <View style={{flex:1}}>
             <PageTemplate title={'Help'} logout = {this.logout}/>
-            <ScrollView>
+   
+          <ScrollView style={{}}>
+            <View style={{marginBottom: 60}}>
+
             <View style={styles.container}>
               <Text style={styles.titleText}>
                 General
@@ -142,8 +141,12 @@ class Help extends Component {
               </View>
               
             </View>
+
+
+            </View>
             </ScrollView>
-            </React.Fragment>
+   
+            </View>
         
           );
 
@@ -158,12 +161,12 @@ export default Help
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    //flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
     width: Layout.window.width - 20,
-    marginLeft:10
+    marginLeft:10,
   },
   accordianContainer: {
     //flex:1,
@@ -183,13 +186,13 @@ const styles = StyleSheet.create({
     marginTop:5, 
   },
   linkContainer: {
-    marginTop: 7,
+    marginTop: 8,
     flexDirection: 'row',
     //paddingVertical: 15,
     //paddingHorizontal: 5,
     flexDirection: "row",
     //justifyContent: "space-between",
-    alignItems: "center"
+    alignItems: "center",
   },
   helpButton: {
                       //position: 'absolute',

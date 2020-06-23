@@ -50,7 +50,7 @@ class Profile extends Component {
     fetch(`https://geohut.metis-data.site/historycheckins/${this.props.reducer.userInfo.workId}`)
       .then(res => res.json())
       .then(res => {
-       
+       console.log(res["data"])
         this.setState({ data: res["data"], showHistory: true })
       })
   }
@@ -101,29 +101,36 @@ class Profile extends Component {
 
     render(){
 
-
         return (
           <React.Fragment>
           <PageTemplate title={'Profile'} logout = {this.logout}/>
           <Content padder>
             <Card>
               <CardItem header bordered>
-                <Text>{`User Id: ${this.state.workId}`}</Text>
+                <View style={styles.cardContainer}>
+                  <Text style={styles.cartTitles}>User Id: </Text>
+                  <Text>{this.state.workId}</Text>
+                </View>
               </CardItem>
               <CardItem bordered>
                 <Body>
-                  <Text>
-                    First Name: {this.state.firstName}
-                  </Text>
-                  <Text>
-                    Last Name: {this.state.lastName}
-                  </Text>
-                  <Text>
-                    Check-Ins This Week: {this.state.totalWeek}
-                  </Text>
-                  <Text>
-                    Total Check-Ins: {this.state.total}
-                  </Text>
+                  <View style={styles.cardContainer}>
+                    <Text style={styles.cartTitles}>First Name: </Text>
+                    <Text>{this.state.firstName}</Text>
+                  </View>
+                  <View style={styles.cardContainer}>
+                    <Text style={styles.cartTitles}>Last Name: </Text>
+                    <Text>{this.state.lastName}</Text>
+                  </View>
+                  <View style={styles.cardContainer}>
+                    <Text style={styles.cartTitles}>Check-Ins This Week: </Text>
+                    <Text>{this.state.totalWeek}</Text>
+                  </View>
+                  <View style={styles.cardContainer}>
+                    <Text style={styles.cartTitles}>Total Check-Ins: </Text>
+                    <Text>{this.state.total}</Text>
+                  </View>
+                
                 </Body>
               </CardItem>
               
@@ -151,7 +158,7 @@ class Profile extends Component {
                       full
                       rounded
                       primary
-                      onPress={()=>Alert.alert('Data sharing may be added in the future')}>
+                      onPress={()=>Alert.alert('Data sharing is coming soon! Thank you for your patience.')}>
                       <Text style = {{color:'white'}}>Share my Data</Text>
                     </Button> : <View></View>
                     }
@@ -160,9 +167,17 @@ class Profile extends Component {
                      
                       this.state.data.map((item, index) => (
                         <View key = {index} style = {styles.item}>
-                                <View>
-                                    <Text>{`Site: ${item.site_id}`}</Text>
-                                    <Text>{`Checkin Date: ${item.checkin_date_time.substring(0,10)} ${item.checkin_date_time.substring(11,16)} AM`}</Text>
+                                <View style={styles.cardContainer}>
+                                  <Text style={styles.cartTitles}>Name: </Text>
+                                  <Text>{`${this.state.firstName} ${this.state.lastName}`}</Text>
+                                </View>
+                                <View style={styles.cardContainer}>
+                                  <Text style={styles.cartTitles}>Checkin Site: </Text>
+                                  <Text>{`${item.site_id}`}</Text>
+                                </View>
+                                <View style={styles.cardContainer}>
+                                  <Text style={styles.cartTitles}>Checkin Time Stamp: </Text>
+                                  <Text>{`${item.checkin_date_time.substring(0,10)} ${item.checkin_date_time.substring(11,16)}`}</Text>
                                 </View>
                         </View>
                       ))  : <View></View>
@@ -210,14 +225,25 @@ const styles = StyleSheet.create({
     //flexDirection: 'row',
     //justifyContent: 'space-between',
     //alignItems: 'center',
-    padding: 15,
-    //margin: 2,
+    padding: 20,
+    margin: 2,
     //borderColor: '#2a4944',
-    //borderRadius: 20,
+    borderRadius: 10,
     //idth: Layout.window.width - 20,
     //width:'100%',
     alignSelf: 'stretch',
     borderWidth: 1,
     backgroundColor: '#a7a6ba'
- }
+ },
+  cardContainer: {
+    //marginTop: 8,
+    //paddingVertical: 15,
+    //paddingHorizontal: 5,
+    flexDirection: "row",
+    //justifyContent: "space-between",
+    alignItems: "center",
+},
+  cartTitles: {
+    fontWeight: "bold"
+}
 });

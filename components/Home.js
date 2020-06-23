@@ -355,7 +355,7 @@ checkedIn = () =>{
       this.setState({ submittedAnimation: false });
     } else {
       Alert.alert(
-        "You have already checked in. If you think this is a mistake contact our app support team under the help page."
+        "You already checked in. If this is a mistake contact us on the Help page."
       );
     }
   };
